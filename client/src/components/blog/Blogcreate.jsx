@@ -15,11 +15,11 @@ const BlogCreate = () => {
     if (file) {
       try {
         const options = {
-          maxSizeMB: 0.5,
-          maxWidthOrHeight: 500,
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1000,
           useWebWorker: true,
-          initialQuality: 0.5, 
-          maxIteration: 10
+          initialQuality: 0.8, 
+          maxIteration: 5
         };
 
         const compressedFile = await imageCompression(file, options);
