@@ -18,7 +18,6 @@ const createBlog = async (req, res)=>{
         res.status(500).json({ message: 'Server Error', error });
     }
 }
-
 const getAllBlogs = async (req, res) => {
     try {
       const blogs = await Blog.find();

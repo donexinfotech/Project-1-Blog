@@ -9,6 +9,7 @@ const Navbar = () => {
         <div className="flex space-x-6">
           <Link to="/" className="text-white">Home</Link>
           <Link to="/login" className="text-white">Login</Link>
+          <Link to="/create-blog" className="text-white">Create</Link>
         </div>
       </div>
     </nav>
