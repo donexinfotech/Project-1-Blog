@@ -5,7 +5,7 @@ const createBlog = async (req, res)=>{
         const {title, image, description} = req.body;
     
         if(!title || !image || !description) {
-            res.send(400).json({
+            res.status(400).json({
                 message: "All fields are required"
             });
         };
@@ -27,4 +27,29 @@ const getAllBlogs = async (req, res) => {
     }
   };
 
-module.exports = {createBlog, getAllBlogs};
+  const updateBlog = async (req, res) => {
+    try {
+        const data = req.body;
+        const id = req.params.id;
+
+        const updatedBlog = await Blog.updateOne(
+            { _id: id },
+            { $set: data }
+        );
+
+        if (updatedBlog.matchedCount === 0) {
+            return res.status(404).json({
+                message: "Blog not found"
+            });
+        }
+
+        res.status(200).json({ message: "Blog updated successfully", data });
+    } catch (error) {
+        res.status(500).json({
+            message: "Something went wrong",
+            error
+        });
+    }
+}
+
+module.exports = {createBlog, getAllBlogs, updateBlog};
