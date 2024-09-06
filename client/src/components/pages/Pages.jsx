@@ -4,6 +4,7 @@ import Navbar from '../Navbar';
 import Home from './Home'
 import Login from './Login/Login'
 import Blogcreate from '../blog/Blogcreate';
+import BlogDetails from '../blog/Blogdetails';
 
 function Pages() {
   return (
@@ -13,6 +14,7 @@ function Pages() {
         <Route path="/" element={<Home/>}/>
         <Route path="/login" element={<Login/>} />
         <Route path="/create-blog" element={<Blogcreate/>} />
+        <Route path="/blogs/:id" element={<BlogDetails/>} />
       </Routes>
     </Router>
   );
