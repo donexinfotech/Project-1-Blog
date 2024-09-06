@@ -109,7 +109,7 @@ const Home = () => {
                     <h2 className="text-xl font-semibold text-blue-600">{blog.title}</h2>
                     <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
                     <p className="text-gray-500 text-sm">
-                      <em>Created at: {new Date(blog.created_at).toLocaleDateString()}</em>
+                      <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
                     </p>
                   </div>
                 </div>
@@ -124,8 +124,8 @@ const Home = () => {
           <button
             key={index + 1}
             onClick={() => paginate(index + 1)}
-            className={`px-4 py-2 border-2 border-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition ${
-              currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'
+            className={`px-4 py-2 border-2 border-blue-800 rounded-md hover:bg-blue-900 hover:text-white transition ${
+              currentPage === index + 1 ? 'bg-blue-900 text-white' : 'bg-white text-blue-500'
             }`}
           >
             {index + 1}
