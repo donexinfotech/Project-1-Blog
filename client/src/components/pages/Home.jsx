@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchBlogs } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa'; // Import the search icon from react-icons
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { MutatingDots } from 'react-loader-spinner'
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -32,6 +33,7 @@ const Home = () => {
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (

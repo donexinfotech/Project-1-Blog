@@ -13,4 +13,11 @@ export const fetchBlogs = async () => {
     }
 };
 
-
+export const getBlogById = async (id)=>{
+    try {
+        const response = await axios.get(`/api/blog/get-blog-by-id/${id}`)
+        return response.data
+    } catch (error) {
+        console.log(error);
+    }
+};

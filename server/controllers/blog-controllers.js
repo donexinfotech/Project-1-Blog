@@ -26,7 +26,8 @@ const getAllBlogs = async (req, res) => {
       res.status(500).json({ message: 'Server Error', error });
     }
   };
-  const deleteBlog = async (req,res) => {
+
+const deleteBlog = async (req,res) => {
     try {
         const { id } = req.params;
     
@@ -66,4 +67,21 @@ const getAllBlogs = async (req, res) => {
     }
 }
 
-module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog};
+const getBlogById = async (req, res)=>{
+    try {
+        const id = req.params.id
+        if(!id){
+            res.status(400).json({
+                "message" : "Please provide the id"
+            });
+        }
+        const blog = await Blog.findById(
+            {_id : id},
+        );
+        res.status(200).json(blog);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById};

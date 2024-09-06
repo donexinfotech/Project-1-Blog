@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchBlogs } from '../../api/blogService'; 
+import { getBlogById } from '../../api/blogService'; 
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -11,7 +11,7 @@ const BlogDetails = () => {
   useEffect(() => {
     const getBlog = async () => {
       try {
-        const data = await fetchBlogs(id);
+        const data = await getBlogById(id);
         setBlog(data);
       } catch (err) {
         setError('Failed to fetch blog details.');
