@@ -4,6 +4,7 @@ const {createBlog, getAllBlogs,deleteBlog, updateBlog} = require("../controllers
 
 router.route("/create").post(createBlog);
 router.route("/get-blogs").get(getAllBlogs);
+router.route("/:id").delete(deleteBlog);
 router.route("/update-blog/:id").patch(updateBlog);
 
 module.exports = router;

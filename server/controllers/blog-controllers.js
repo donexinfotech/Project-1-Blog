@@ -26,6 +26,20 @@ const getAllBlogs = async (req, res) => {
       res.status(500).json({ message: 'Server Error', error });
     }
   };
+  const deleteBlog = async (req,res) => {
+    try {
+        const { id } = req.params;
+    
+        const blog = await Blog.findByIdAndDelete(id);
+    
+        if (!blog) {
+          return res.status(404).json({ message: "Blog not found" });
+        }
+        res.status(200).json({ message: "Blog deleted successfully" });
+      } catch (error) {
+        res.status(500).json({ message: "Server Error", error });
+      }
+  };
 
   const updateBlog = async (req, res) => {
     try {
@@ -52,4 +66,4 @@ const getAllBlogs = async (req, res) => {
     }
 }
 
-module.exports = {createBlog, getAllBlogs, updateBlog};
+module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog};
