@@ -12,12 +12,17 @@ const Navbar = () => {
         <div className="flex space-x-6 items-center">
           <div></div>
           <Link to="/" className="hover:font-bold">HOME</Link>
-
+          <Link to="#" className="hover:font-bold">ABOUT US</Link>
+          {isLoggedIn ? (
+            <Link to="/create-blog" className="hover:font-bold">CREATE</Link>
+          ): ""}
+          <Link to="#" className="hover:font-bold">CONTACT US</Link>
+        </div>
+        <div className="account">
           {/* Conditionally render Login/Logout and username/profile picture */}
           {isLoggedIn ? (
             <>
               <div className="flex items-center space-x-3">
-              <Link to="/create-blog" className="hover:font-bold">CREATE</Link>
                 <button
                   onClick={logout}
                   className="hover:font-bold"
@@ -35,8 +40,8 @@ const Navbar = () => {
           ) : (
             <Link to="/login" className="hover:font-bold">Login</Link>
           )}
-
         </div>
+        
       </div>
     </nav>
   );
