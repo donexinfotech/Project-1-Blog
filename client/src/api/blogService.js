@@ -1,8 +1,23 @@
 import axios from 'axios';
 
-export const deleteBlog = async (id) => {
+export const deleteBlogById = async (id) => {
     await axios.delete(`/api/blog/${id}`);
   };
+
+
+export const updateBlogById = async (id, data) => {
+  try {
+    const response = await axios.patch(`/api/blog/update-blog/${id}`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to update blog: ' + error.response?.data?.message || error.message);
+  }
+};
+
 export const fetchBlogs = async () => {
     try {
         const response = await axios.get(`/api/blog/get-blogs`);

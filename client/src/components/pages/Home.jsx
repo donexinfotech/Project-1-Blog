@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { fetchBlogs } from '../../api/blogService';
-import { FaSearch } from 'react-icons/fa'; // Import the search icon from react-icons
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import { MutatingDots } from 'react-loader-spinner'
+import { fetchBlogs, getBlogById } from '../../api/blogService';
+import { FaSearch } from 'react-icons/fa';
+import BlogDetails from '../blog/Blogdetails';  // Import the BlogDetails component
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedBlog, setSelectedBlog] = useState(null);
   const blogsPerPage = 6;
 
   useEffect(() => {
@@ -32,8 +32,20 @@ const Home = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
 
-  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+  const handleBlogClick = async (id) => {
+    try {
+      const blogData = await getBlogById(id);
+      setSelectedBlog(blogData);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
+  const handleBackToBlogs = () => {
+    setSelectedBlog(null);
+  };
+
+  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
@@ -46,12 +58,13 @@ const Home = () => {
             <input
               type="text"
               placeholder="Search blogs..."
-              className='focus:outline-none'
+              className="focus:outline-none"
             />
             <button>
               <FaSearch />
             </button>
           </div>
+
           {/* Categories */}
           <div className="mb-6 rounded-lg bg-gray-100 pl-3">
             <h3 className="text-xl text-blue-700 font-semibold mb-2 pt-2">Categories</h3>
@@ -91,48 +104,54 @@ const Home = () => {
               <li>
                 <span className="text-blue-700">Post Title 3</span>
               </li>
-              {/* Add more top posts as needed */}
             </ul>
           </div>
         </div>
 
-        {/* Main Content for Blogs */}
         <div className="w-3/5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-            {currentBlogs.map((blog) => (
-              <Link to={`/blogs/${blog._id}`} key={blog._id}>
-                <div className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-                  <img
-                    src={`data:image/jpeg;base64,${blog.image}`}
-                    alt={blog.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h2 className="text-xl font-semibold text-blue-600">{blog.title}</h2>
-                    <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
-                    <p className="text-gray-500 text-sm">
-                      <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
-                    </p>
+          {selectedBlog ? (
+            <BlogDetails selectedBlog={selectedBlog} handleBackToBlogs={handleBackToBlogs} />
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                {currentBlogs.map((blog) => (
+                  <div
+                    key={blog._id}
+                    onClick={() => handleBlogClick(blog._id)}
+                    className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                  >
+                    <img
+                      src={`data:image/jpeg;base64,${blog.image}`}
+                      alt={blog.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h2 className="text-xl font-semibold text-blue-600">{blog.title}</h2>
+                      <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
+                      <p className="text-gray-500 text-sm">
+                        <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-          {/* Pagination */}
+                ))}
+              </div>
+              {/* Pagination */}
+              <div className="flex justify-center items-center mt-3 mb-10 space-x-2">
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => paginate(index + 1)}
+                    className={`px-4 py-2 border-2 border-blue-800 rounded-md hover:bg-blue-900 hover:text-white transition ${
+                      currentPage === index + 1 ? 'bg-blue-900 text-white' : 'bg-white text-blue-500'
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
-      </div>
-      <div className="flex justify-center items-center mt-3 mb-10 space-x-2">
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => paginate(index + 1)}
-            className={`px-4 py-2 border-2 border-blue-800 rounded-md hover:bg-blue-900 hover:text-white transition ${
-              currentPage === index + 1 ? 'bg-blue-900 text-white' : 'bg-white text-blue-500'
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
       </div>
     </>
   );
