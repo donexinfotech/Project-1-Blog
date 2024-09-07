@@ -9,10 +9,10 @@ function Register() {
     email: '',
     password: '',
     confirmPassword: '',
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     phone: '',
-    profilePicture: '',
+    profile_picture: '',
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState(null);
@@ -41,7 +41,7 @@ function Register() {
         setFormData((prevData) => {
           const newData = {
             ...prevData,
-            profilePicture: base64String, // Store base64 string without the data URL prefix
+            profile_picture: base64String, // Store base64 string without the data URL prefix
           };
           console.log('Updated formData:', newData); // Log updated formData
           return newData;
@@ -77,12 +77,15 @@ function Register() {
         body: JSON.stringify(formData),
       });
 
+      console.log(response);
+
       if (response.ok) {
+        const res_data = await response.json();
+        console.log(res_data);
         toast.success('Registration successful!');
         navigate('/login');
       } else {
-        const res_data = await response.json();
-        toast.error(res_data.message || 'Registration failed.');
+        toast.error('Registration failed.');
       }
 
     } catch (error) {
@@ -99,14 +102,14 @@ function Register() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="profilePicture">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="profile_picture">
               Profile Picture
             </label>
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
               <FaImage className="text-gray-400 mr-2" />
               <input
               type="file"
-              id="image"
+              id="profile_picture"
               accept="image/*"
               onChange={handleImageChange}
               required
@@ -154,16 +157,16 @@ function Register() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="first_name">
               First Name
             </label>
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
               <FaUser className="text-gray-400 mr-2" />
               <input
                 className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
-                id="firstName"
+                id="first_name"
                 type="text"
-                value={formData.firstName}
+                value={formData.first_name}
                 onChange={handleInputChange}
                 placeholder="Enter your first name"
                 required
@@ -172,16 +175,16 @@ function Register() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="last_name">
               Last Name
             </label>
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
               <FaUser className="text-gray-400 mr-2" />
               <input
                 className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
-                id="lastName"
+                id="last_name"
                 type="text"
-                value={formData.lastName}
+                value={formData.last_name}
                 onChange={handleInputChange}
                 placeholder="Enter your last name"
                 required
