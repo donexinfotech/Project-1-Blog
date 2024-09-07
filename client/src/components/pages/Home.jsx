@@ -1,39 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBlogs, getBlogById } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
-import BlogDetails from '../blog/Blogdetails';  
+import BlogDetails from '../blog/Blogdetails';
 
 const Home = () => {
-
-  const API = "http://localhost:5000";
-
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState({
-    profile_picture : "",
-    username : ""
-  })
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const blogsPerPage = 6;
 
-  const getUser = async (id)=>{
-    const response = await fetch(`${API}/api/auth/get-user-by-id/${id}`);
-    const user_data = await response.json();
-    setUser({
-      ...user,
-      profile_picture : user_data.profile_picture,
-      username : user_data.username
-    })
-    console.log(user);
-  }
+  const fetchUserData = async (blogsData) => {
+    const updatedBlogs = await Promise.all(
+      blogsData.map(async (blog) => {
+        try {
+          const response = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
+          const userData = await response.json();
+          console.log(userData);//this log data is comming but not updating in blog
+          return {
+            ...blog,
+            user: {
+              username: userData.message.username || 'Unknown', // Ensure there's a fallback for the username
+              profile_picture: userData.message.profile_picture || 'default-pic-url' // Provide a fallback image
+            }
+          };
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          return {
+            ...blog,
+            user: { username: 'Unknown', profile_picture: 'default-pic-url' } // Fallback for error cases
+          };
+        }
+      })
+    );
+    setBlogs(updatedBlogs); // Update state only after fetching all users
+    console.log('Updated Blogs with User Data:', updatedBlogs); // Debugging
+  };
 
   useEffect(() => {
     const getBlogs = async () => {
       try {
-        const data = await fetchBlogs();
-        setBlogs(data);
+        const blogsData = await fetchBlogs();
+        await fetchUserData(blogsData); // Fetch user data after blogs are loaded
       } catch (err) {
         setError(err.message);
       } finally {
@@ -109,6 +118,7 @@ const Home = () => {
               </li>
             </ul>
           </div>
+
           {/* Top Posts */}
           <div className="mb-6 rounded-lg bg-gray-100 pl-3">
             <h3 className="text-xl text-blue-700 font-semibold mb-2 pt-2">Top Posts</h3>
@@ -149,7 +159,14 @@ const Home = () => {
                       <p className="text-gray-500 text-sm">
                         <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
                       </p>
-                        <p>Created by: {user.username}</p>
+                      <div className="flex items-center mt-2">
+                        <img
+                          src={`data:image/jpeg;base64,${blog.user.profile_picture}`}
+                          alt={blog.user?.username || 'Unknown'}
+                          className="w-8 h-8 rounded-full mr-2"
+                        />
+                        <p>Created by: {blog.user?.username || 'Unknown'}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
