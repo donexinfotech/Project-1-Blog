@@ -1,41 +1,96 @@
 import React, { useState } from 'react';
-import { FaUserAlt, FaLock, FaEnvelope } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaUserAlt, FaLock, FaEnvelope, FaPhoneAlt, FaImage, FaUser } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../api/userApi'; // Import useAuth hook for authentication
+import { toast } from 'react-toastify';
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const { register } = useAuth(); // Destructure the register function from useAuth hook
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    profilePicture: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prevData) => ({
+          ...prevData,
+          profilePicture: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
 
-    // Handle the registration logic here (e.g., send data to API)
-    // On success:
-    setSuccess('Registration successful!');
-    setError(null);
-
-    // On error:
-    // setError('Registration failed.');
+    setLoading(true);
+    try {
+      await register(
+        formData.username,
+        formData.email,
+        formData.password,
+        formData.firstName,
+        formData.lastName,
+        formData.phone,
+        formData.profilePicture
+      );
+      toast.success('Registration successful!');
+      navigate('/login');
+    } catch (error) {
+      toast.error(error.message || 'Registration failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-sm w-full">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full"> {/* Adjusted width here */}
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-700">Register</h2>
-        
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
-        
+
         <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="profilePicture">
+              Profile Picture
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+              <FaImage className="text-gray-400 mr-2" />
+              <input
+                className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
+                id="profilePicture"
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+              />
+            </div>
+          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
               Username
@@ -46,14 +101,14 @@ function Register() {
                 className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
                 id="username"
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username}
+                onChange={handleInputChange}
                 placeholder="Enter your username"
                 required
               />
             </div>
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               Email
@@ -64,14 +119,68 @@ function Register() {
                 className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="Enter your email"
                 required
               />
             </div>
           </div>
-          
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
+              First Name
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+              <FaUser className="text-gray-400 mr-2" />
+              <input
+                className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
+                id="firstName"
+                type="text"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                placeholder="Enter your first name"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">
+              Last Name
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+              <FaUser className="text-gray-400 mr-2" />
+              <input
+                className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
+                id="lastName"
+                type="text"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder="Enter your last name"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
+              Phone
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+              <FaPhoneAlt className="text-gray-400 mr-2" />
+              <input
+                className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
+                id="phone"
+                type="text"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="Enter your phone number"
+                required
+              />
+            </div>
+          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
               Password
@@ -82,8 +191,8 @@ function Register() {
                 className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
                 id="password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleInputChange}
                 placeholder="Enter your password"
                 required
               />
@@ -91,17 +200,17 @@ function Register() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirm-password">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
               Confirm Password
             </label>
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
               <FaLock className="text-gray-400 mr-2" />
               <input
                 className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
-                id="confirm-password"
+                id="confirmPassword"
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
                 placeholder="Confirm your password"
                 required
               />
@@ -109,12 +218,13 @@ function Register() {
           </div>
 
           <div className="flex flex-col items-center justify-between gap-4">
-            <span>Already have an account?<Link className='text-blue-500 ml-3' to="/login">Login</Link></span>
+            <span>Already have an account? <Link className="text-blue-500 ml-3" to="/login">Login</Link></span>
             <button
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
               type="submit"
+              disabled={loading} // Disable button while loading
             >
-              Register
+              {loading ? 'Registering...' : 'Register'}
             </button>
           </div>
         </form>

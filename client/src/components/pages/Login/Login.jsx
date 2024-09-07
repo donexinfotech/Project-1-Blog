@@ -1,16 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaUserAlt, FaLock } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-
-
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../api/userApi'; // Import the useAuth hook for authentication
+import { toast, ToastContainer } from 'react-toastify';
 
 function Login() {
+  const { login } = useAuth(); // Destructure login function from useAuth hook
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await login(username, password); // Call login with username and password
+      toast.success('Login successful!');
+      navigate('/'); // Redirect to root after successful login
+    } catch (error) {
+      toast.error(error.message || 'Login failed!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-sm w-full">
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-700">Login</h2>
         
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
               Username
@@ -22,6 +43,8 @@ function Login() {
                 id="username"
                 type="text"
                 placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)} // Update username state
               />
             </div>
           </div>
@@ -37,21 +60,25 @@ function Login() {
                 id="password"
                 type="password"
                 placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} // Update password state
               />
             </div>
           </div>
           
           <div className="flex flex-col items-center justify-between gap-4">
-              <span>Don't have an account yet?<Link to="/register" className='text-blue-500 ml-3'>Register</Link></span>
+            <span>Don't have an account yet?<Link to="/register" className="text-blue-500 ml-3">Register</Link></span>
             <button
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
               type="submit"
+              disabled={loading} // Disable button while loading
             >
-              Sign In
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </div>
         </form>
       </div>
+      <ToastContainer/>
     </div>
   );
 }
