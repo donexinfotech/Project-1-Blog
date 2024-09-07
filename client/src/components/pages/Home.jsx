@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBlogs, getBlogById } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
-import BlogDetails from '../blog/blogdetails';
+import BlogDetails from '../blog/blogDetails';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);

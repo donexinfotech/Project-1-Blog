@@ -17,7 +17,7 @@ export const loginUser = async (email, password) => {
     localStorage.setItem(USER_ID, userId);
     localStorage.setItem(USERNAME_KEY, username);
     localStorage.setItem(PROFILE_PICTURE_KEY, profile_picture);
-
+    
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Login failed');
@@ -29,19 +29,26 @@ export const registerUser = async (userData) => {
   try {
     const response = await axios.post('/api/auth/register', userData);
     const { token, userId, username, profile_picture } = response.data;
-
+    
     // Store the token and user details in localStorage
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_ID, userId);
     localStorage.setItem(USERNAME_KEY, username);
     localStorage.setItem(PROFILE_PICTURE_KEY, profile_picture);
-
+    
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Registration failed');
   }
 };
 
+export const fetchUserById = async (id) => {
+  const response = await fetch(`/api/auth/get-user-by-id/${id}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+  return response.json();
+};
 // Get token from localStorage
 export const getToken = () => {
   return localStorage.getItem(TOKEN_KEY);
@@ -111,5 +118,6 @@ export const useAuth = () => {
     setProfilePicture(null);
   };
 
-  return { isLoggedIn, username, profilePicture, login, register, logout };
+
+  return { isLoggedIn,fetchUserById, username, profilePicture, login, register, logout };
 };
