@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBlogs, getBlogById } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
-import BlogDetails from '../blog/blogDetails';
+import BlogDetails from '../blog/blogdetails';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -153,12 +153,12 @@ const Home = () => {
           </div>
 
           <div className="mb-6">
-            <button
+            <a
               onClick={toggleSortOrder}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
             >
-              {sortOrder === 'desc' ? 'To Sort: Oldest First' : 'To Sort: Latest First'}
-            </button>
+              {sortOrder === 'desc' ? 'Sort: Oldest First' : 'Sort: Latest First'}
+            </a>
           </div>
         </div>
 
