@@ -10,9 +10,9 @@ const createBlog = async (req, res)=>{
             });
         };
 
-        const author = req.user;
+        const user_details = req.user;
     
-        const newBlog = new Blog({ title, image, description, created_by:author.username, category });
+        const newBlog = new Blog({ title, image, description, created_by:user_details._id.toString(), category });
         const savedBlog = await newBlog.save();
     
         res.status(200).json(savedBlog);

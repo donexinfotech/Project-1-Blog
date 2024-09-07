@@ -1,15 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBlogs, getBlogById } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
-import BlogDetails from '../blog/Blogdetails';  // Import the BlogDetails component
+import BlogDetails from '../blog/Blogdetails';  
 
 const Home = () => {
+
+  const API = "http://localhost:5000";
+
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState({
+    profile_picture : "",
+    username : ""
+  })
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const blogsPerPage = 6;
+
+  const getUser = async (id)=>{
+    const response = await fetch(`${API}/api/auth/get-user-by-id/${id}`);
+    const user_data = await response.json();
+    setUser({
+      ...user,
+      profile_picture : user_data.profile_picture,
+      username : user_data.username
+    })
+    console.log(user);
+  }
 
   useEffect(() => {
     const getBlogs = async () => {
@@ -131,7 +149,7 @@ const Home = () => {
                       <p className="text-gray-500 text-sm">
                         <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
                       </p>
-                        <p>Created by: {blog.created_by}</p>
+                        <p>Created by: {user.username}</p>
                     </div>
                   </div>
                 ))}

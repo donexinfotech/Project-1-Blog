@@ -59,4 +59,18 @@ const Login = async (req, res)=>{
     }
 }
 
-module.exports = {Register, Login};
+const getUserById = async (req, res) =>{
+    try {
+        const id = req.params.id
+        const user = await User.findOne({_id : id});
+
+        res.status(200).json({
+            message : user
+        })
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = {Register, Login, getUserById};

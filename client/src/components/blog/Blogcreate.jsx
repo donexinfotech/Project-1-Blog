@@ -5,13 +5,16 @@ import imageCompression from 'browser-image-compression';
 const BlogCreate = () => {
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
+  const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
+  const Token = localStorage.getItem('authToken');
 
   const handleImageChange = async (e) => {
+
     const file = e.target.files[0];
     if (file) {
       try {
@@ -43,7 +46,20 @@ const BlogCreate = () => {
     setSuccess(null);
 
     try {
-      await axios.post('/api/blog/create', { title, image, description });
+      await axios.post('/api/blog/create', 
+        { 
+          title, 
+          image, 
+          description,
+          category
+        },
+        { 
+          headers: { 
+            'Authorization': `Bearer ${Token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );;
       setSuccess('Blog post created successfully!');
       setTitle('');
       setImage('');
@@ -91,6 +107,18 @@ const BlogCreate = () => {
               />
             </div>
           )}
+        </div>
+
+        <div className="mb-6">
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+          <input
+            type="text"
+            id="category"
+            value={category}
+            onChange={(e) =>{ setCategory(e.target.value); console.log(category)}}
+            required
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+          />
         </div>
 
         <div className="mb-6">
