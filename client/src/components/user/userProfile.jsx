@@ -44,7 +44,7 @@ const UserProfile = () => {
           </div>
           {/* User Details */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{user.message.first_name.toUpperCase()}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{user.message.first_name.toUpperCase()} {user.message.last_name.toUpperCase()}</h1>
             <h1 className="text-3xl font-bold text-gray-900">@{user.message.username.toUpperCase()}</h1>
             <p className="text-blue-500 mt-2">Email:- {user.message.email}</p>
             {/* Add more user details here */}
