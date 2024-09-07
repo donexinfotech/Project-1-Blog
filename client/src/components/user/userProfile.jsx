@@ -32,9 +32,10 @@ const UserProfile = () => {
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
+    <>
     <div className="p-6 max-w-4xl mx-20">
       {user && (
-        <div className="flex items-start space-x-6 gap-10">
+        <div className="flex items-center space-x-6 gap-10">
           <div className="flex-shrink-0">
             <img
               src={`data:image/jpeg;base64,${user.message.profile_picture}`}
@@ -43,18 +44,21 @@ const UserProfile = () => {
             />
           </div>
           {/* User Details */}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{user.message.first_name.toUpperCase()} {user.message.last_name.toUpperCase()}</h1>
-            <h1 className="text-3xl font-bold text-gray-900">@{user.message.username.toUpperCase()}</h1>
-            <p className="text-blue-500 mt-2">Email:- {user.message.email}</p>
+          <div className='flex flex-col gap-2'>
+            <h1 className="text-5xl font-bold font-mono text-gray-900">{user.message.first_name.toUpperCase()}</h1>
+            <h1 className="text-5xl font-bold font-mono text-gray-900">{user.message.last_name.toUpperCase()}</h1>
+            <h1 className="text-4xl font-bold font-sans text-gray-900">@{user.message.username.toUpperCase()}</h1>
+            <p className="text-blue-500 mt-2 font-bold font-sans text-2xl">Email:- {user.message.email}</p>
             {/* Add more user details here */}
             <div className="mt-2">
-              <h2 className="text-xl font-semibold text-gray-800">Number of Blog Posts :{user.message.posts}</h2>
+              <h2 className="text-2xl font-semibold text-gray-800">Number of Blog Posts :{user.message.posts}</h2>
             </div>
           </div>
         </div>
       )}
     </div>
+      <hr />
+    </>
   );
 };
 
