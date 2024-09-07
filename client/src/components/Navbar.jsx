@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../api/userApi'; // Assuming userApi.js is in the same directory
+import { useAuth } from '../api/userApi';
+import { FaUserCircle, FaSignOutAlt, FaChevronRight } from 'react-icons/fa';
 
 const Navbar = () => {
   const { isLoggedIn, username, profilePicture, logout } = useAuth();
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleDropdownToggle = () => {
+    setShowDropdown(prev => !prev);
+  };
 
   return (
     <nav className="bg-gray-300 p-4">
@@ -14,33 +20,49 @@ const Navbar = () => {
           <Link to="#" className="hover:font-bold hover:text-red-600">ABOUT US</Link>
           {isLoggedIn ? (
             <Link to="/create-blog" className="hover:font-bold hover:text-red-600">CREATE</Link>
-          ): ""}
+          ) : null}
           <Link to="#" className="hover:font-bold hover:text-red-600">CONTACT US</Link>
         </div>
-        <div className="account">
-          {/* Conditionally render Login/Logout and username/profile picture */}
+        <div className="relative">
           {isLoggedIn ? (
             <>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={logout}
-                  className="hover:font-bold hover:text-red-600"
-                >
-                  LOGOUT
-                </button>
+              <button
+                onClick={handleDropdownToggle}
+                className="flex items-center space-x-3 bg-transparent border-none cursor-pointer"
+              >
                 <img
                   src={`data:image/jpeg;base64,${profilePicture}`}
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
                 <span className="font-medium">{username.toUpperCase()}</span>
-              </div>
+                <FaChevronRight
+                  className={`ml-2 transition-transform duration-300 ${showDropdown ? 'rotate-90' : 'rotate-0'}`}
+                />
+              </button>
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg border border-gray-300 rounded">
+                  <Link
+                    to="/user-profile"
+                    className="flex items-center p-2 hover:bg-gray-100 border-b border-gray-200"
+                  >
+                    <FaUserCircle className="mr-2" />
+                    User Profile
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="flex items-center p-2 hover:bg-gray-100 w-full text-left"
+                  >
+                    <FaSignOutAlt className="mr-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
             </>
           ) : (
-            <Link to="/login" className="hover:font-bold">Login</Link>
+            <Link to="/login" className="hover:font-bold hover:text-red-600">Login</Link>
           )}
         </div>
-        
       </div>
     </nav>
   );
