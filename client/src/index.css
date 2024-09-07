@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.nav-link.active {
+    color: #dc2626 !important; /* Tailwind's red-600 */
+  }
