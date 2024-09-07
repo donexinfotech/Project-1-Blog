@@ -35,15 +35,14 @@ function Register() {
       const reader = new FileReader();
       
       reader.onloadend = () => {
-        // Extract base64 string from the result
         const base64String = reader.result.split(',')[1];
         
         setFormData((prevData) => {
           const newData = {
             ...prevData,
-            profile_picture: base64String, // Store base64 string without the data URL prefix
+            profile_picture: base64String,
           };
-          console.log('Updated formData:', newData); // Log updated formData
+          console.log('Updated formData:', newData); 
           return newData;
         });
         
@@ -55,7 +54,7 @@ function Register() {
         setError('Failed to convert image to base64.');
       };
       
-      reader.readAsDataURL(file); // Correctly call readAsDataURL on the reader instance
+      reader.readAsDataURL(file); 
     }
   };
 
@@ -94,6 +93,8 @@ function Register() {
       setLoading(false);
     }
   };
+
+  console.log(error);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">

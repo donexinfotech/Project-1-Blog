@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { FaUserAlt, FaLock } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../api/userApi'; // Import the useAuth hook for authentication
+import { useAuth } from '../../../api/userApi';
 import { toast, ToastContainer } from 'react-toastify';
 
 function Login() {
-  const { login } = useAuth(); // Destructure login function from useAuth hook
+  const { login } = useAuth(); 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,9 +16,9 @@ function Login() {
     setLoading(true);
 
     try {
-      await login(username, password); // Call login with username and password
+      await login(username, password); 
       toast.success('Login successful!');
-      navigate('/'); // Redirect to root after successful login
+      navigate('/'); 
     } catch (error) {
       toast.error(error.message || 'Login failed!');
     } finally {
@@ -44,7 +44,7 @@ function Login() {
                 type="text"
                 placeholder="Enter your username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)} // Update username state
+                onChange={(e) => setUsername(e.target.value)} 
               />
             </div>
           </div>
@@ -61,7 +61,7 @@ function Login() {
                 type="password"
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} // Update password state
+                onChange={(e) => setPassword(e.target.value)} 
               />
             </div>
           </div>
@@ -71,7 +71,7 @@ function Login() {
             <button
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
               type="submit"
-              disabled={loading} // Disable button while loading
+              disabled={loading} 
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
