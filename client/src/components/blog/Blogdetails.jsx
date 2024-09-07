@@ -1,23 +1,15 @@
 import React from 'react';
-import { FaArrowLeft,FaEdit } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 
 const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
-  
   return (
     <div className="h-screen flex flex-col items-center justify-start ml-32"> {/* Added ml-64 for left margin */}
-      {/* Image at the top */}
       <div className="absolute w-full max-w-3xl">
       <button
         onClick={handleBackToBlogs}
         className="absolute top-4 left-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-200"
       >
         <FaArrowLeft/>
-      </button>
-      <button
-        onClick={handleBackToBlogs}
-        className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-200"
-      >
-        <FaEdit/>
       </button>
         <img
           src={`data:image/jpeg;base64,${selectedBlog.image}`}

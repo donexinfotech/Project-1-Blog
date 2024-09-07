@@ -14,7 +14,7 @@ const BlogEdit = ({ blog, onCancel }) => {
         description,
         image,
       });
-      onCancel(); // Hide the edit form on successful update
+      onCancel();
     } catch (error) {
       console.error('Error updating blog:', error);
     }

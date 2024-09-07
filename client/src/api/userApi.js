@@ -6,13 +6,11 @@ const USER_ID = 'userId';
 const USERNAME_KEY = 'username';
 const PROFILE_PICTURE_KEY = 'profilePicture';
 
-// Login user function
 export const loginUser = async (email, password) => {
   try {
     const response = await axios.post('/api/auth/login', { email, password });
     const { token, userId, username, profile_picture } = response.data;
 
-    // Store the token and user details in localStorage
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_ID, userId);
     localStorage.setItem(USERNAME_KEY, username);
@@ -24,13 +22,11 @@ export const loginUser = async (email, password) => {
   }
 };
 
-// Register user function
 export const registerUser = async (userData) => {
   try {
     const response = await axios.post('/api/auth/register', userData);
     const { token, userId, username, profile_picture } = response.data;
     
-    // Store the token and user details in localStorage
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_ID, userId);
     localStorage.setItem(USERNAME_KEY, username);
@@ -49,12 +45,21 @@ export const fetchUserById = async (id) => {
   }
   return response.json();
 };
-// Get token from localStorage
 export const getToken = () => {
   return localStorage.getItem(TOKEN_KEY);
 };
+export const fetchUserBlogs = async (userId) => {
+  try {
+    const response = await fetch(`/api/blog/get-blog-by-userid/${userId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user blogs');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
-// Logout user and clear localStorage
 export const logoutUser = () => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_ID);
@@ -62,13 +67,11 @@ export const logoutUser = () => {
   localStorage.removeItem(PROFILE_PICTURE_KEY);
 };
 
-// Custom hook for authentication
 export const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
 
-  // Effect to check if the user is authenticated on component mount
   useEffect(() => {
     const token = getToken();
     if (token) {
@@ -82,7 +85,6 @@ export const useAuth = () => {
     }
   }, []);
 
-  // Login handler
   const login = async (email, password) => {
     try {
       const data = await loginUser(email, password);
@@ -96,7 +98,6 @@ export const useAuth = () => {
     }
   };
 
-  // Register handler
   const register = async (userData) => {
     try {
       const data = await registerUser(userData);
@@ -110,7 +111,6 @@ export const useAuth = () => {
     }
   };
 
-  // Logout handler
   const logout = () => {
     logoutUser();
     setIsLoggedIn(false);
@@ -119,5 +119,5 @@ export const useAuth = () => {
   };
 
 
-  return { isLoggedIn,fetchUserById, username, profilePicture, login, register, logout };
+  return { isLoggedIn, username, profilePicture, login, register, logout };
 };
