@@ -19,18 +19,18 @@ const Navbar = () => {
 
           <ul class="nav nav-underline">
             <li class="nav-item">
-              <Link to="/" className="hover:font-bold hover:text-red-600">HOME</Link>
+              <Link to="/" className="hover:font-bold hover:text-red-600 nav-link active text-red-600">HOME</Link>
             </li>
             <li class="nav-item">
-              <Link to="#" className="hover:font-bold hover:text-red-600">ABOUT US</Link>
+              <Link to="#" className="hover:font-bold hover:text-red-600 nav-link">ABOUT US</Link>
             </li>
             <li class="nav-item">
               {isLoggedIn ? (
-              <Link to="/create-blog" className="hover:font-bold hover:text-red-600">CREATE</Link>
+              <Link to="/create-blog" className="hover:font-bold hover:text-red-600 nav-link">CREATE</Link>
               ) : null}
             </li>
             <li class="nav-item">
-              <Link to="#" className="hover:font-bold hover:text-red-600">CONTACT US</Link>
+              <Link to="#" className="hover:font-bold nav-link hover:text-red-600">CONTACT US</Link>
             </li>
           </ul>
 
