@@ -130,8 +130,8 @@ const Home = () => {
                       <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
                       <p className="text-gray-500 text-sm">
                         <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
-                        <p>Created by: {blog.created_by}</p>
                       </p>
+                        <p>Created by: {blog.created_by}</p>
                     </div>
                   </div>
                 ))}

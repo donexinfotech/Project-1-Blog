@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { FaUserAlt, FaLock, FaEnvelope, FaPhoneAlt, FaImage, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-// import { useAuth } from '../../../api/userApi'; // Import useAuth hook for authentication
 import { toast } from 'react-toastify';
+import { FaUserAlt, FaLock, FaEnvelope, FaPhoneAlt, FaImage, FaUser } from 'react-icons/fa';
 
 function Register() {
-
-  const API = "http://localhost:5000";
-
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -18,7 +14,10 @@ function Register() {
     phone: '',
     profilePicture: '',
   });
+  const [imagePreview, setImagePreview] = useState(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -27,19 +26,36 @@ function Register() {
       ...prevData,
       [id]: value,
     }));
+    console.log(formData);
   };
 
-  const handleProfilePictureChange = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
+      
       reader.onloadend = () => {
-        setFormData((prevData) => ({
-          ...prevData,
-          profilePicture: reader.result,
-        }));
+        // Extract base64 string from the result
+        const base64String = reader.result.split(',')[1];
+        
+        setFormData((prevData) => {
+          const newData = {
+            ...prevData,
+            profilePicture: base64String, // Store base64 string without the data URL prefix
+          };
+          console.log('Updated formData:', newData); // Log updated formData
+          return newData;
+        });
+        
+        setImagePreview(URL.createObjectURL(file));
       };
-      reader.readAsDataURL(file);
+      
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+        setError('Failed to convert image to base64.');
+      };
+      
+      reader.readAsDataURL(file); // Correctly call readAsDataURL on the reader instance
     }
   };
 
@@ -53,20 +69,20 @@ function Register() {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API}/api/auth/register`, {
+      const response = await fetch(`/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-      console.log(response);
-      const res_data = await response.json();
-      console.log(res_data)
 
-      if(response.ok){
+      if (response.ok) {
         toast.success('Registration successful!');
         navigate('/login');
+      } else {
+        const res_data = await response.json();
+        toast.error(res_data.message || 'Registration failed.');
       }
 
     } catch (error) {
@@ -78,7 +94,7 @@ function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full"> {/* Adjusted width here */}
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-700">Register</h2>
 
         <form onSubmit={handleSubmit}>
@@ -89,13 +105,16 @@ function Register() {
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
               <FaImage className="text-gray-400 mr-2" />
               <input
-                className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
-                id="profilePicture"
-                type="file"
-                accept="image/*"
-                onChange={handleProfilePictureChange}
-              />
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            />
             </div>
+            {imagePreview && (
+            <img src={imagePreview} alt="" />)}
           </div>
 
           <div className="mb-4">
@@ -229,7 +248,7 @@ function Register() {
             <button
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
               type="submit"
-              disabled={loading} // Disable button while loading
+              disabled={loading}
             >
               {loading ? 'Registering...' : 'Register'}
             </button>
