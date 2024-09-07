@@ -46,6 +46,8 @@ const Login = async (req, res)=>{
                 "Message": "Loggedin Successfully", 
                 "token": await userExist.generateToken(),
                 "userId" : userExist._id.toString(),
+                "username": userExist.username,
+                "profile_picture": userExist.profile_picture,
             });
         } else{
             res.status(401).json({
