@@ -18,7 +18,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-3">
                 {/* Display user's profile picture and username */}
                 <img
-                  src={profilePicture}
+                  src={`data:image/jpeg;base64,${profilePicture}`}
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
