@@ -50,9 +50,9 @@ const Home = () => {
 
   return (
     <>
-      <div className="p-6 max-w-6xl mx-auto flex justify-center">
+      <div className="p-6 max-w-6xl mx-auto flex justify">
         {/* Left Sidebar for Search and Categories */}
-        <div className="w-1/4 pr-4">
+        <div className="w-1/4 pr-1">
           {/* Search Bar */}
           <div className="mb-6 flex flex-row justify-center items-center w-full p-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500">
             <input
