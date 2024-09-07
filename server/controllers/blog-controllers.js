@@ -86,4 +86,14 @@ const getBlogById = async (req, res)=>{
     }
 }
 
-module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById};
+const getBlogByUserId = async (req, res)=>{
+    try {
+        const id = req.params.id;
+        const blog = await Blog.find({created_by: id});
+        res.status(200).json(blog);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId};

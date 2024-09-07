@@ -45,9 +45,9 @@ const UserProfile = () => {
           </div>
           {/* User Details */}
           <div className='flex flex-col gap-2'>
-            <h1 className="text-5xl font-bold font-mono text-gray-900">{user.message.first_name.toUpperCase()}</h1>
-            <h1 className="text-5xl font-bold font-mono text-gray-900">{user.message.last_name.toUpperCase()}</h1>
-            <h1 className="text-4xl font-bold font-sans text-gray-900">@{user.message.username.toUpperCase()}</h1>
+            <h3 className="text-2xl font-bold font-mono text-gray-900">First name :- {user.message.first_name.toUpperCase()}</h3>
+            <h3 className="text-2xl font-bold font-mono text-gray-900">Last name:- {user.message.last_name.toUpperCase()}</h3>
+            <h3 className="text-2xl font-bold font-sans text-gray-900">Username :- @{user.message.username.toUpperCase()}</h3>
             <p className="text-blue-500 mt-2 font-bold font-sans text-2xl">Email:- {user.message.email}</p>
             {/* Add more user details here */}
             <div className="mt-2">
