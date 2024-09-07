@@ -3,7 +3,7 @@ import { FaArrowLeft } from 'react-icons/fa';
 
 const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
   return (
-    <div className="h-screen flex flex-col items-center justify-start ml-48"> {/* Added ml-64 for left margin */}
+    <div className="h-screen flex flex-col items-center justify-start ml-32"> {/* Added ml-64 for left margin */}
       {/* Image at the top */}
       <div className="absolute w-full max-w-3xl">
       <button

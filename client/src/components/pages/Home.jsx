@@ -50,7 +50,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="p-6 max-w-6xl mx-auto flex justify">
+      <div className="p-6 max-w-6xl mx-auto flex">
         {/* Left Sidebar for Search and Categories */}
         <div className="w-1/4 pr-1">
           {/* Search Bar */}
