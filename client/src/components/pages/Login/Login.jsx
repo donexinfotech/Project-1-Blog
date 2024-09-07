@@ -2,6 +2,8 @@ import React from 'react';
 import { FaUserAlt, FaLock } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
+
+
 function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">

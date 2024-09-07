@@ -2,15 +2,17 @@ const Blog = require("../models/blog-model");
 
 const createBlog = async (req, res)=>{
     try {
-        const {title, image, description} = req.body;
+        const {title, image, description, category} = req.body;
     
         if(!title || !image || !description) {
             res.status(400).json({
                 message: "All fields are required"
             });
         };
+
+        const author = req.user;
     
-        const newBlog = new Blog({ title, image, description });
+        const newBlog = new Blog({ title, image, description, created_by:author.username, category });
         const savedBlog = await newBlog.save();
     
         res.status(200).json(savedBlog);

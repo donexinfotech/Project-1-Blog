@@ -13,9 +13,17 @@ const blogSchema = new mongoose.Schema({
         type:String,
         require:true
     },
+    category:{
+        type:String,
+        require:true
+    },
     created_at:{
         type: Date,
         default: Date.now
+    }, 
+    created_by:{
+        type: String,
+        default: "User"
     } 
 })
 
