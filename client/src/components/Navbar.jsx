@@ -16,12 +16,28 @@ const Navbar = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-blue-700">Name</h1>
         <div className="flex space-x-6 items-center">
-          <Link to="/" className="hover:font-bold hover:text-red-600">HOME</Link>
-          <Link to="#" className="hover:font-bold hover:text-red-600">ABOUT US</Link>
-          {isLoggedIn ? (
-            <Link to="/create-blog" className="hover:font-bold hover:text-red-600">CREATE</Link>
-          ) : null}
-          <Link to="#" className="hover:font-bold hover:text-red-600">CONTACT US</Link>
+
+          <ul class="nav nav-underline">
+            <li class="nav-item">
+              <Link to="/" className="hover:font-bold hover:text-red-600">HOME</Link>
+            </li>
+            <li class="nav-item">
+              <Link to="#" className="hover:font-bold hover:text-red-600">ABOUT US</Link>
+            </li>
+            <li class="nav-item">
+              {isLoggedIn ? (
+              <Link to="/create-blog" className="hover:font-bold hover:text-red-600">CREATE</Link>
+              ) : null}
+            </li>
+            <li class="nav-item">
+              <Link to="#" className="hover:font-bold hover:text-red-600">CONTACT US</Link>
+            </li>
+          </ul>
+
+          
+          
+          
+          
         </div>
         <div className="relative">
           {isLoggedIn ? (
