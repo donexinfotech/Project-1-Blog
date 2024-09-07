@@ -1,9 +1,16 @@
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const connectDb = require("./utils/db");
 const blogRouter = require("./router/blog-router");
 const authRouter = require("./router/auth-router");
 
+app.use(cors({
+  origin: '*',
+  methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
+  credentials:true,
+  allowedHeaders: 'Content-Type,Authorization'
+}))
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));

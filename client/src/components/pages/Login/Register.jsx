@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { FaUserAlt, FaLock, FaEnvelope, FaPhoneAlt, FaImage, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../api/userApi'; // Import useAuth hook for authentication
+// import { useAuth } from '../../../api/userApi'; // Import useAuth hook for authentication
 import { toast } from 'react-toastify';
 
 function Register() {
-  const { register } = useAuth(); // Destructure the register function from useAuth hook
+
+  const API = "http://localhost:5000";
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -51,17 +53,22 @@ function Register() {
 
     setLoading(true);
     try {
-      await register(
-        formData.username,
-        formData.email,
-        formData.password,
-        formData.firstName,
-        formData.lastName,
-        formData.phone,
-        formData.profilePicture
-      );
-      toast.success('Registration successful!');
-      navigate('/login');
+      const response = await fetch(`${API}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      console.log(response);
+      const res_data = await response.json();
+      console.log(res_data)
+
+      if(response.ok){
+        toast.success('Registration successful!');
+        navigate('/login');
+      }
+
     } catch (error) {
       toast.error(error.message || 'Registration failed.');
     } finally {
