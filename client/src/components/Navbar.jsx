@@ -8,15 +8,14 @@ const Navbar = () => {
   return (
     <nav className="bg-gray-300 p-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Name</h1>
+        <h1 className="text-2xl font-bold text-blue-700">Name</h1>
         <div className="flex space-x-6 items-center">
-          <div></div>
-          <Link to="/" className="hover:font-bold">HOME</Link>
-          <Link to="#" className="hover:font-bold">ABOUT US</Link>
+          <Link to="/" className="hover:font-bold hover:text-red-600">HOME</Link>
+          <Link to="#" className="hover:font-bold hover:text-red-600">ABOUT US</Link>
           {isLoggedIn ? (
-            <Link to="/create-blog" className="hover:font-bold">CREATE</Link>
+            <Link to="/create-blog" className="hover:font-bold hover:text-red-600">CREATE</Link>
           ): ""}
-          <Link to="#" className="hover:font-bold">CONTACT US</Link>
+          <Link to="#" className="hover:font-bold hover:text-red-600">CONTACT US</Link>
         </div>
         <div className="account">
           {/* Conditionally render Login/Logout and username/profile picture */}
@@ -25,7 +24,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={logout}
-                  className="hover:font-bold"
+                  className="hover:font-bold hover:text-red-600"
                 >
                   LOGOUT
                 </button>

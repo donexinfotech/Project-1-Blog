@@ -94,25 +94,25 @@ const Home = () => {
 
           {/* Categories */}
           <div className="mb-6 rounded-lg bg-gray-100 pl-3">
-            <h3 className="text-xl text-blue-700 font-semibold mb-2 pt-2">Categories</h3>
+            <h3 className="text-xl text-blue-700 mb-2 pt-2 font-bold">Categories</h3>
             <ul className="space-y-2">
               <li>
-                <button className="w-full text-left p-2 text-blue-700 hover:text-blue-900 font-bold">
+                <button className="w-full text-left p-2 text-red-600 font-bold">
                   Technology
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-blue-700 hover:text-blue-900 font-bold">
+                <button className="w-full text-left p-2 text-red-600   font-bold">
                   Health
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-blue-700 hover:text-blue-900 font-bold">
+                <button className="w-full text-left p-2 text-red-600  font-bold">
                   Finance
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-blue-700 hover:text-blue-900 font-bold">
+                <button className="w-full text-left p-2 text-red-600  font-bold">
                   Education
                 </button>
               </li>
@@ -124,13 +124,13 @@ const Home = () => {
             <h3 className="text-xl text-blue-700 font-semibold mb-2 pt-2">Top Posts</h3>
             <ul className="space-y-2">
               <li>
-                <span className="text-blue-700">Post Title 1</span>
+                <span className="text-red-600 ">Post Title 1</span>
               </li>
               <li>
-                <span className="text-blue-700">Post Title 2</span>
+                <span className="text-red-600 ">Post Title 2</span>
               </li>
               <li>
-                <span className="text-blue-700">Post Title 3</span>
+                <span className="text-red-600 ">Post Title 3</span>
               </li>
             </ul>
           </div>
@@ -169,7 +169,7 @@ const Home = () => {
                         </div>
                       </div>
                     <div className="p-4">
-                      <h2 className="text-xl font-semibold text-blue-600">{blog.title}</h2>
+                      <h2 className="text-xl font-semibold text-red-600">{blog.title}</h2>
                       <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
                       
                     </div>
