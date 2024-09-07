@@ -16,26 +16,25 @@ const Navbar = () => {
           {isLoggedIn ? (
             <>
               <div className="flex items-center space-x-3">
-                {/* Display user's profile picture and username */}
-                <img
-                  src={`data:image/jpeg;base64,${profilePicture}`}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="text-white font-medium">{username}</span>
+              <Link to="/create-blog" className="text-white hover:font-bold">Create</Link>
                 <button
                   onClick={logout}
                   className="text-white hover:font-bold"
                 >
                   Logout
                 </button>
+                <img
+                  src={`data:image/jpeg;base64,${profilePicture}`}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="text-white font-medium">{username.toUpperCase()}</span>
               </div>
             </>
           ) : (
             <Link to="/login" className="text-white hover:font-bold">Login</Link>
           )}
 
-          <Link to="/create-blog" className="text-white hover:font-bold">Create</Link>
         </div>
       </div>
     </nav>

@@ -153,20 +153,25 @@ const Home = () => {
                       alt={blog.title}
                       className="w-full h-48 object-cover"
                     />
-                    <div className="p-4">
-                      <h2 className="text-xl font-semibold text-blue-600">{blog.title}</h2>
-                      <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
-                      <p className="text-gray-500 text-sm">
-                        <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
-                      </p>
-                      <div className="flex items-center mt-2">
+                      <div className="flex items-center m-4 mb-0 justify-between">
+                        <div className="flex">
                         <img
                           src={`data:image/jpeg;base64,${blog.user.profile_picture}`}
                           alt={blog.user?.username || 'Unknown'}
                           className="w-8 h-8 rounded-full mr-2"
                         />
-                        <p>Created by: {blog.user?.username || 'Unknown'}</p>
+                        <p>{blog.user?.username || 'Unknown'}</p>
+                        </div>
+                        <div className=''>
+                        <p className="text-gray-500 text-sm">
+                        <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
+                        </p>
+                        </div>
                       </div>
+                    <div className="p-4">
+                      <h2 className="text-xl font-semibold text-blue-600">{blog.title}</h2>
+                      <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
+                      
                     </div>
                   </div>
                 ))}
