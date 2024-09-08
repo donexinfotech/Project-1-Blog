@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchBlogs, getBlogById } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
-import BlogDetails from "../blog/blogDetails"
+import BlogDetails from '../blog/blogDetails';
+import Loader from '../utils/Loader';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -94,7 +95,8 @@ const Home = () => {
     setSortOrder((prevOrder) => (prevOrder === 'desc' ? 'asc' : 'desc'));
   };
 
-  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+  if (loading) return <Loader/>;
+
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
@@ -105,7 +107,7 @@ const Home = () => {
             <input
               type="text"
               placeholder="Search blogs..."
-              className="focus:outline-none"
+              className="bg-white focus:outline-none"
             />
             <button>
               <FaSearch />

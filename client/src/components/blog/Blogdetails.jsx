@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
 import { fetchUserById } from '../../api/userApi';
 import { Link } from 'react-router-dom';
+import Loader from '../utils/Loader';
 
 const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
   const [user, setUser] = useState(null);
@@ -26,7 +27,7 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
     }
   }, [selectedBlog]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loader/>;
   if (error) return <p>Error loading user data.</p>;
 
   const userProfileLink = user ? `/user/${user.message._id}` : '#';

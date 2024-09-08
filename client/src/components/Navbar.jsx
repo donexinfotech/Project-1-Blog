@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+// Navbar.js
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../api/userApi';
+import { useAuth } from './auth/AuthContext'; // Adjust the path as needed
 import { FaUserCircle, FaSignOutAlt, FaChevronRight, FaSignInAlt } from 'react-icons/fa';
 
 const Navbar = () => {
   const { isLoggedIn, username, profilePicture, logout } = useAuth();
-  const [showDropdown, setShowDropdown] = useState(false);
-  const location = useLocation(); // Get the current location
+  const [showDropdown, setShowDropdown] = React.useState(false);
+  const location = useLocation();
 
   const handleDropdownToggle = () => {
     setShowDropdown(prev => !prev);
@@ -15,7 +16,6 @@ const Navbar = () => {
   const Id = localStorage.getItem('userId');
   const profileLink = `/user/${Id}`;
 
-  // Helper function to determine if a link is active
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -72,7 +72,7 @@ const Navbar = () => {
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
-                <span className="text-white font-medium hover:underline">{username.toUpperCase()}</span>
+                <span className="text-white font-medium">{username.toUpperCase()}</span>
                 <FaChevronRight
                   className={`text-white ml-2 transition-transform duration-300 ${showDropdown ? 'rotate-90' : 'rotate-0'}`}
                 />

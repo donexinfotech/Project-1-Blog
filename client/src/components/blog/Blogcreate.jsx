@@ -84,7 +84,7 @@ const BlogCreate = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
           />
         </div>
 
@@ -117,7 +117,7 @@ const BlogCreate = () => {
             value={category}
             onChange={(e) =>{ setCategory(e.target.value); console.log(category)}}
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
           />
         </div>
 
@@ -129,7 +129,7 @@ const BlogCreate = () => {
             onChange={(e) => setDescription(e.target.value)}
             required
             rows="4"
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
           ></textarea>
         </div>
 

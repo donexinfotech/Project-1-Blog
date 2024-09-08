@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
 import { updateBlogById } from '../../api/blogService';
 import { FaArrowLeft, FaEdit } from 'react-icons/fa';
+import Loader from '../utils/Loader';
 
 const UserProfile = () => {
   const { id: userId } = useParams();
@@ -104,7 +105,7 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+  if (loading) return <Loader/>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
