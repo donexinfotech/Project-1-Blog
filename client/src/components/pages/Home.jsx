@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchBlogs, getBlogById } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
-import BlogDetails from '../blog/blogDetails';
+import BlogDetails from "../blog/blogDetails"
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -208,8 +208,8 @@ const Home = () => {
                   <button
                     key={index + 1}
                     onClick={() => paginate(index + 1)}
-                    className={`px-3 py-2 border-2 border-blue-800 rounded-full hover:bg-blue-800 hover:text-white transition ${
-                      currentPage === index + 1 ? 'bg-blue-800 text-white' : 'bg-white text-blue-500'
+                    className={`px-3 py-2 border-2 bg-blue-800 border-blue-800 rounded-full hover:text-black transition ${
+                      currentPage === index + 1 ? 'bg-blue-800 text-white ' : 'bg-white text-blue-500'
                     }`}
                   >
                     {index + 1}

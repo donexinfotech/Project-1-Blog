@@ -1,46 +1,64 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../api/userApi';
-import { FaUserCircle, FaSignOutAlt, FaChevronRight } from 'react-icons/fa';
+import { FaUserCircle, FaSignOutAlt, FaChevronRight, FaSignInAlt } from 'react-icons/fa';
 
 const Navbar = () => {
   const { isLoggedIn, username, profilePicture, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const location = useLocation(); // Get the current location
 
   const handleDropdownToggle = () => {
     setShowDropdown(prev => !prev);
   };
 
-  const Id=localStorage.getItem('userId');
-  const profileLink=`/user/${Id}`
+  const Id = localStorage.getItem('userId');
+  const profileLink = `/user/${Id}`;
+
+  // Helper function to determine if a link is active
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-gray-300 p-4">
+    <nav className="p-4 bg-gradient-to-br from-lightskyblue via-rebeccapurple to-sandybrown">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-blue-700">Name</h1>
-        <div className="flex space-x-6 items-center">
-
-          <ul className="nav nav-underline">
-            <li className="nav-item">
-              <Link to="/" className="hover:font-bold hover:text-red-600 nav-link active text-red-600">HOME</Link>
+        <h1 className="text-2xl font-bold text-white">Name</h1>
+        <div className="flex items-center space-x-6">
+          <ul className="flex space-x-6 items-center">
+            <li>
+              <Link
+                to="/"
+                className={`text-white font-bold border-b-2 transition ${isActive('/') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
+              >
+                HOME
+              </Link>
             </li>
-            <li className="nav-item">
-              <Link to="#" className="hover:font-bold hover:text-red-600 nav-link">ABOUT US</Link>
+            <li>
+              <Link
+                to="/about-us"
+                className={`text-white font-bold border-b-2 transition ${isActive('/about-us') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
+              >
+                ABOUT US
+              </Link>
             </li>
-            <li className="nav-item">
+            <li>
               {isLoggedIn ? (
-              <Link to="/create-blog" className="hover:font-bold hover:text-red-600 nav-link">CREATE</Link>
+                <Link
+                  to="/create-blog"
+                  className={`text-white font-bold border-b-2 transition ${isActive('/create-blog') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
+                >
+                  CREATE
+                </Link>
               ) : null}
             </li>
-            <li className="nav-item">
-              <Link to="#" className="hover:font-bold nav-link hover:text-red-600">CONTACT US</Link>
+            <li>
+              <Link
+                to="/contact"
+                className={`text-white font-bold border-b-2 transition ${isActive('/contact') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
+              >
+                CONTACT US
+              </Link>
             </li>
           </ul>
-
-          
-          
-          
-          
         </div>
         <div className="relative">
           {isLoggedIn ? (
@@ -54,9 +72,9 @@ const Navbar = () => {
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
-                <span className="font-medium">{username.toUpperCase()}</span>
+                <span className="text-white font-medium hover:underline">{username.toUpperCase()}</span>
                 <FaChevronRight
-                  className={`ml-2 transition-transform duration-300 ${showDropdown ? 'rotate-90' : 'rotate-0'}`}
+                  className={`text-white ml-2 transition-transform duration-300 ${showDropdown ? 'rotate-90' : 'rotate-0'}`}
                 />
               </button>
               {showDropdown && (
@@ -79,7 +97,15 @@ const Navbar = () => {
               )}
             </>
           ) : (
-            <Link to="/login" className="hover:font-bold hover:text-red-600">Login</Link>
+            <div className="flex items-center space-x-2">
+              <FaSignInAlt className="text-white" />
+              <Link
+                to="/login"
+                className="text-white font-bold hover:underline"
+              >
+                Login
+              </Link>
+            </div>
           )}
         </div>
       </div>

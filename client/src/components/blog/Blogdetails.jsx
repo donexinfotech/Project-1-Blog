@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
-import { fetchUserById } from '../../api/userApi'; // Adjust the import path as needed
+import { fetchUserById } from '../../api/userApi';
 import { Link } from 'react-router-dom';
 
 const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
