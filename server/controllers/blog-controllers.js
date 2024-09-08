@@ -96,4 +96,14 @@ const getBlogByUserId = async (req, res)=>{
     }
 }
 
-module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId};
+const getBlogByCategory = async (req, res) =>{
+    try {
+        const category = req.params.category;
+        const blog = await Blog.find({category : category});
+        res.status(200).json(blog);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId, getBlogByCategory};
