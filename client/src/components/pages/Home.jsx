@@ -7,37 +7,54 @@ import Loader from '../utils/Loader';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [selectedTopPost, setSelectedTopPost] = useState(null);
   const [sortOrder, setSortOrder] = useState('desc');
+  const [category, setCategory] = useState('all');
   const blogsPerPage = 6;
 
   const fetchUserData = async (blogsData) => {
-    const updatedBlogs = await Promise.all(
-      blogsData.map(async (blog) => {
-        try {
-          const response = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
-          const userData = await response.json();
-          return {
-            ...blog,
-            user: {
-              username: userData.message.username || 'Unknown',
-              profile_picture: userData.message.profile_picture || 'default-pic-url',
-              _id: userData.message._id || 'default-id'
-            }
-          };
-        } catch (error) {
-          return {
-            ...blog,
-            user: { username: 'Unknown', profile_picture: 'default-pic-url', _id: 'default-id' }
-          };
-        }
-      })
-    );
-    setBlogs(updatedBlogs);
+    try {
+      const updatedBlogs = await Promise.all(
+        blogsData.map(async (blog) => {
+          try {
+            const response = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
+            const userData = await response.json();
+            return {
+              ...blog,
+              user: {
+                username: userData.message.username || 'Unknown',
+                profile_picture: userData.message.profile_picture || 'default-pic-url',
+                _id: userData.message._id || 'default-id'
+              }
+            };
+          } catch (error) {
+            return {
+              ...blog,
+              user: { username: 'Unknown', profile_picture: 'default-pic-url', _id: 'default-id' }
+            };
+          }
+        })
+      );
+      setBlogs(updatedBlogs);
+      applyCategoryFilter(category, updatedBlogs); 
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const applyCategoryFilter = (selectedCategory, blogsData) => {
+    if (selectedCategory === 'all') {
+      setFilteredBlogs(blogsData);
+    } else {
+      const filtered = blogsData.filter(blog => blog.category === selectedCategory);
+      setFilteredBlogs(filtered);
+    }
+    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -54,24 +71,34 @@ const Home = () => {
     getBlogs();
   }, []);
 
-  const indexOfLastBlog = currentPage * blogsPerPage;
-  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  const handleCategory = (selectedCategory) => {
+    setCategory(selectedCategory);
+    applyCategoryFilter(selectedCategory, blogs); 
+  };
 
-  const sortedBlogs = [...blogs].sort((a, b) => {
+  const sortedBlogs = [...filteredBlogs].sort((a, b) => {
     return sortOrder === 'desc'
       ? new Date(b.created_at) - new Date(a.created_at)
       : new Date(a.created_at) - new Date(b.created_at);
   });
 
+  const indexOfLastBlog = currentPage * blogsPerPage;
+  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = sortedBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  const topPosts = [...blogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3);
+
+  const topPosts = [...filteredBlogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3);
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
 
   const handleBlogClick = async (id) => {
     try {
       const blogData = await getBlogById(id);
-      setSelectedBlog(blogData);
+      if (blogData) {
+        setSelectedBlog(blogData);
+      } else {
+        console.error('Blog data is null or undefined:', id);
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -85,21 +112,15 @@ const Home = () => {
   const handleTopPostClick = async (id) => {
     try {
       const blogData = await getBlogById(id);
-      setSelectedTopPost(blogData);
+      if (blogData) {
+        setSelectedTopPost(blogData);
+      } else {
+        console.error('Top post data is null or undefined:', id);
+      }
     } catch (err) {
       setError(err.message);
     }
   };
-
-  const handleCategory = async(category) =>{
-    try {
-      const response = fetch(`/api/blog/get-blog-by-category/${category}`);
-      const res_data = await response.json();
-      setBlogs(res_data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === 'desc' ? 'asc' : 'desc'));
@@ -128,22 +149,42 @@ const Home = () => {
             <h3 className="text-xl text-blue-700 mb-2 pt-2 font-bold">Categories</h3>
             <ul className="space-y-2">
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("technology")}>
+                <button
+                  className={`w-full text-left p-2 font-bold ${category === 'all' ? 'text-blue-700' : 'text-red-600'}`}
+                  onClick={() => handleCategory('all')}
+                >
+                  All Blogs
+                </button>
+              </li>
+              <li>
+                <button
+                  className={`w-full text-left p-2 font-bold ${category === 'technology' ? 'text-blue-700' : 'text-red-600'}`}
+                  onClick={() => handleCategory("technology")}
+                >
                   Technology
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("health")}>
+                <button
+                  className={`w-full text-left p-2 font-bold ${category === 'health' ? 'text-blue-700' : 'text-red-600'}`}
+                  onClick={() => handleCategory("health")}
+                >
                   Health
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("finance")}>
+                <button
+                  className={`w-full text-left p-2 font-bold ${category === 'finance' ? 'text-blue-700' : 'text-red-600'}`}
+                  onClick={() => handleCategory("finance")}
+                >
                   Finance
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("education")}>
+                <button
+                  className={`w-full text-left p-2 font-bold ${category === 'education' ? 'text-blue-700' : 'text-red-600'}`}
+                  onClick={() => handleCategory("education")}
+                >
                   Education
                 </button>
               </li>
@@ -182,51 +223,64 @@ const Home = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-                {currentBlogs.map((blog) => (
-                  <div
-                    key={blog._id}
-                    onClick={() => handleBlogClick(blog._id)}
-                    className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-                  >
-                    <img
-                      src={`data:image/jpeg;base64,${blog.image}`}
-                      alt={blog.title}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="flex items-center m-4 mb-0 justify-between">
-                      <Link to={`/user/${blog.user._id}`} className="flex">
-                        <img
-                          src={`data:image/jpeg;base64,${blog.user.profile_picture}`}
-                          alt={blog.user?.username || 'Unknown'}
-                          className="w-8 h-8 rounded-full mr-2"
-                        />
-                        <p>{blog.user?.username || 'Unknown'}</p>
-                      </Link>
-                      <div>
-                        <p className="text-gray-500 text-sm">
-                          <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
-                        </p>
+                {currentBlogs.map((blog) => {
+                  if (!blog || !blog.user) {
+                    console.error('Blog or user data is missing:', blog);
+                    return null;
+                  }
+
+                  return (
+                    <div
+                      key={blog._id}
+                      onClick={() => handleBlogClick(blog._id)}
+                      className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                    >
+                      <img
+                        src={`data:image/jpeg;base64,${blog.image}`}
+                        alt={blog.title}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="flex items-center m-4 mb-0 justify-between">
+                        <Link to={`/user/${blog.user._id}`} className="flex">
+                          <img
+                            src={`data:image/jpeg;base64,${blog.user.profile_picture}`}
+                            alt={blog.user?.username || 'Unknown'}
+                            className="w-8 h-8 rounded-full mr-2"
+                          />
+                          <p>{blog.user?.username || 'Unknown'}</p>
+                        </Link>
+                        <div>
+                          <p className="text-gray-500 text-sm">
+                            <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h2 className="text-xl font-semibold text-red-600">{blog.title}</h2>
+                        <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
                       </div>
                     </div>
-                    <div className="p-4">
-                      <h2 className="text-xl font-semibold text-red-600">{blog.title}</h2>
-                      <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-              <div className="flex justify-center items-center mt-3 mb-10 space-x-2">
-                {[...Array(totalPages)].map((_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => paginate(index + 1)}
-                    className={`px-3 py-2 border-2 bg-blue-800 border-blue-800 rounded-full hover:text-black transition ${
-                      currentPage === index + 1 ? 'bg-blue-800 text-white ' : 'bg-white text-blue-500'
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
+
+              <div className="flex justify-center mt-6">
+                <nav>
+                  <ul className="flex">
+                    {Array.from({ length: totalPages }).map((_, index) => (
+                      <li key={index + 1}>
+                        <button
+                          onClick={() => paginate(index + 1)}
+                          className={`px-4 py-2 mx-1 rounded-md ${
+                            currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
               </div>
             </>
           )}
