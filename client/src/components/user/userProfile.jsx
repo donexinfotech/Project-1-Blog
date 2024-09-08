@@ -238,10 +238,10 @@ const UserProfile = () => {
             )}
           </div>
           <hr />
-          <div className="p-6 max-w-4xl mx-72">
+          <div className="p-6 mx-40">
             <h2 className="text-2xl font-bold mb-4">User's Blogs</h2>
             {blogs.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {blogs.map((blog) => (
                   <div
                     key={blog._id}
