@@ -91,6 +91,16 @@ const Home = () => {
     }
   };
 
+  const handleCategory = async(category) =>{
+    try {
+      const response = fetch(`/api/blog/get-blog-by-category/${category}`);
+      const res_data = await response.json();
+      setBlogs(res_data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === 'desc' ? 'asc' : 'desc'));
   };
@@ -118,22 +128,22 @@ const Home = () => {
             <h3 className="text-xl text-blue-700 mb-2 pt-2 font-bold">Categories</h3>
             <ul className="space-y-2">
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold">
+                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("technology")}>
                   Technology
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold">
+                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("health")}>
                   Health
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold">
+                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("finance")}>
                   Finance
                 </button>
               </li>
               <li>
-                <button className="w-full text-left p-2 text-red-600 font-bold">
+                <button className="w-full text-left p-2 text-red-600 font-bold" onclick={handleCategory("education")}>
                   Education
                 </button>
               </li>
