@@ -27,7 +27,7 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
     }
   }, [selectedBlog]);
 
-  if (loading) return <Loader/>;
+  if (loading) return <Loader text='Loading Blog'/>;
   if (error) return <p>Error loading user data.</p>;
 
   const userProfileLink = user ? `/user/${user.message._id}` : '#';

@@ -105,7 +105,7 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <Loader/>;
+  if (loading) return <Loader text='Loading User Profile'/>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
@@ -238,10 +238,10 @@ const UserProfile = () => {
             )}
           </div>
           <hr />
-          <div className="p-6 max-w-4xl mx-20">
+          <div className="p-6 max-w-4xl mx-72">
             <h2 className="text-2xl font-bold mb-4">User's Blogs</h2>
             {blogs.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {blogs.map((blog) => (
                   <div
                     key={blog._id}

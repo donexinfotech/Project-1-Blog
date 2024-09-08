@@ -95,7 +95,7 @@ const Home = () => {
     setSortOrder((prevOrder) => (prevOrder === 'desc' ? 'asc' : 'desc'));
   };
 
-  if (loading) return <Loader/>;
+  if (loading) return <Loader text='Loading Blogs Hang On'/>;
 
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
