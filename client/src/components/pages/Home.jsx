@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchBlogs, getBlogById } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
 import BlogDetails from '../blog/blogDetails';
@@ -23,13 +24,14 @@ const Home = () => {
             ...blog,
             user: {
               username: userData.message.username || 'Unknown',
-              profile_picture: userData.message.profile_picture || 'default-pic-url'
+              profile_picture: userData.message.profile_picture || 'default-pic-url',
+              _id: userData.message._id || 'default-id'
             }
           };
         } catch (error) {
           return {
             ...blog,
-            user: { username: 'Unknown', profile_picture: 'default-pic-url' }
+            user: { username: 'Unknown', profile_picture: 'default-pic-url', _id: 'default-id' }
           };
         }
       })
@@ -153,19 +155,18 @@ const Home = () => {
           </div>
 
           <div className="mb-6">
-            <a
+            <button
               onClick={toggleSortOrder}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
             >
               {sortOrder === 'desc' ? 'Sort: Oldest First' : 'Sort: Latest First'}
-            </a>
+            </button>
           </div>
         </div>
 
         <div className="w-3/5">
           {selectedBlog || selectedTopPost ? (
             <BlogDetails selectedBlog={selectedBlog || selectedTopPost} handleBackToBlogs={handleBackToBlogs} />
-            
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -181,14 +182,14 @@ const Home = () => {
                       className="w-full h-48 object-cover"
                     />
                     <div className="flex items-center m-4 mb-0 justify-between">
-                      <div className="flex">
+                      <Link to={`/user/${blog.user._id}`} className="flex">
                         <img
                           src={`data:image/jpeg;base64,${blog.user.profile_picture}`}
                           alt={blog.user?.username || 'Unknown'}
                           className="w-8 h-8 rounded-full mr-2"
                         />
                         <p>{blog.user?.username || 'Unknown'}</p>
-                      </div>
+                      </Link>
                       <div>
                         <p className="text-gray-500 text-sm">
                           <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
@@ -207,8 +208,8 @@ const Home = () => {
                   <button
                     key={index + 1}
                     onClick={() => paginate(index + 1)}
-                    className={`px-4 py-2 border-2 border-blue-800 rounded-md hover:bg-blue-900 hover:text-white transition ${
-                      currentPage === index + 1 ? 'bg-blue-900 text-white' : 'bg-white text-blue-500'
+                    className={`px-3 py-2 border-2 border-blue-800 rounded-full hover:bg-blue-800 hover:text-white transition ${
+                      currentPage === index + 1 ? 'bg-blue-800 text-white' : 'bg-white text-blue-500'
                     }`}
                   >
                     {index + 1}

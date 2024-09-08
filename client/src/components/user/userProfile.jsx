@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
 import { updateBlogById } from '../../api/blogService';
 import { FaArrowLeft, FaEdit } from 'react-icons/fa';
 
 const UserProfile = () => {
+  const { id: userId } = useParams();
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,14 +16,13 @@ const UserProfile = () => {
   const [editDescription, setEditDescription] = useState('');
   const [editImage, setEditImage] = useState('');
   const [editCategory, setEditCategory] = useState('');
-
-  const userId = localStorage.getItem('userId');
+  const [currentUserId, setCurrentUserId] = useState(null); // To store localStorage userId
 
   useEffect(() => {
     const getUserData = async () => {
       try {
         if (!userId) {
-          throw new Error('User ID not found in localStorage');
+          throw new Error('User ID not found in URL');
         }
 
         const userData = await fetchUserById(userId);
@@ -38,6 +39,12 @@ const UserProfile = () => {
 
     getUserData();
   }, [userId]);
+
+  useEffect(() => {
+    // Retrieve userId from localStorage
+    const localStorageUserId = localStorage.getItem('userId');
+    setCurrentUserId(localStorageUserId);
+  }, []);
 
   const handleBlogClick = (blog) => {
     setSelectedBlog(blog);
@@ -104,18 +111,22 @@ const UserProfile = () => {
     <>
       {selectedBlog ? (
         <div className="p-6 max-w-4xl mx-20">
-          <button
-            onClick={handleBackToProfile}
-            className="absolute z-1 mt-3 ml-3 text-blue-500 bg-white rounded-full p-2 hover:text-blue-700 mb-4"
-          >
-            <FaArrowLeft />
-          </button>
-          <button
-            onClick={handleEditClick}
-            className="absolute z-1 mt-3 ml-[800px] p-2 bg-white rounded-full text-blue-500 hover:text-blue-700"
-          >
-            <FaEdit />
-          </button>
+              <button
+                onClick={handleBackToProfile}
+                className="absolute z-1 mt-3 ml-3 text-blue-500 bg-white rounded-full p-2 hover:text-blue-700 mb-4"
+              >
+                <FaArrowLeft />
+              </button>
+          {currentUserId === userId && (
+            <>
+              <button
+                onClick={handleEditClick}
+                className="absolute z-1 mt-3 ml-[800px] p-2 bg-white rounded-full text-blue-500 hover:text-blue-700"
+              >
+                <FaEdit />
+              </button>
+            </>
+          )}
           <div className="relative bg-white shadow-md rounded-lg overflow-hidden">
             <img
               src={`data:image/jpeg;base64,${selectedBlog.image}`}
