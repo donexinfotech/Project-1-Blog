@@ -34,7 +34,7 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="username">
-              Username
+              Email
             </label>
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
               <FaUserAlt className="text-gray-400 mr-2" />
