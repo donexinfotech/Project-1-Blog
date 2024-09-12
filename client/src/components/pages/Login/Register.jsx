@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { FaUserAlt, FaLock, FaEnvelope, FaPhoneAlt, FaImage, FaUser } from 'react-icons/fa';
 
 function Register() {
@@ -16,6 +15,7 @@ function Register() {
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ function Register() {
       ...prevData,
       [id]: value,
     }));
-    console.log(formData);
   };
 
   const handleImageChange = (e) => {
@@ -36,16 +35,10 @@ function Register() {
       
       reader.onloadend = () => {
         const base64String = reader.result.split(',')[1];
-        
-        setFormData((prevData) => {
-          const newData = {
-            ...prevData,
-            profile_picture: base64String,
-          };
-          console.log('Updated formData:', newData); 
-          return newData;
-        });
-        
+        setFormData((prevData) => ({
+          ...prevData,
+          profile_picture: base64String,
+        }));
         setImagePreview(URL.createObjectURL(file));
       };
       
@@ -62,7 +55,7 @@ function Register() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      setError('Passwords do not match.');
       return;
     }
 
@@ -76,25 +69,19 @@ function Register() {
         body: JSON.stringify(formData),
       });
 
-      console.log(response);
-
       if (response.ok) {
-        const res_data = await response.json();
-        console.log(res_data);
-        toast.success('Registration successful!');
+        setSuccessMessage('Registration successful!');
         navigate('/login');
       } else {
-        toast.error('Registration failed.');
+        const errorData = await response.json();
+        setError(errorData.message || 'Registration failed.');
       }
-
     } catch (error) {
-      toast.error(error.message || 'Registration failed.');
+      setError('An error occurred during registration.');
     } finally {
       setLoading(false);
     }
   };
-
-  console.log(error);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -109,16 +96,17 @@ function Register() {
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
               <FaImage className="text-gray-400 mr-2" />
               <input
-              type="file"
-              id="profile_picture"
-              accept="image/*"
-              onChange={handleImageChange}
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
+                type="file"
+                id="profile_picture"
+                accept="image/*"
+                onChange={handleImageChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              />
             </div>
             {imagePreview && (
-            <img src={imagePreview} alt="" />)}
+              <img src={imagePreview} alt="Preview" className="mt-2 max-w-full h-auto" />
+            )}
           </div>
 
           <div className="mb-4">
@@ -246,7 +234,16 @@ function Register() {
               />
             </div>
           </div>
-
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
+          {successMessage && (
+            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+              {successMessage}
+            </div>
+          )}
           <div className="flex flex-col items-center justify-between gap-4">
             <span>Already have an account? <Link className="text-blue-500 ml-3" to="/login">Login</Link></span>
             <button
