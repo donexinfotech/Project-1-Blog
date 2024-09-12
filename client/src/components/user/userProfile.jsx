@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
-import { updateBlogById } from '../../api/blogService';
-import { FaArrowLeft, FaEdit } from 'react-icons/fa';
+import { updateBlogById, deleteBlogById } from '../../api/blogService';
+import { FaArrowLeft, FaEdit, FaTrashAlt } from 'react-icons/fa';
 import Loader from '../utils/Loader';
 
 const UserProfile = () => {
   const { id: userId } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -105,19 +106,34 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <Loader text='Loading User Profile'/>;
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this blog?')) {
+        try {
+          await deleteBlogById(selectedBlog._id);
+          setBlogs(blogs.filter(blog => blog._id !== selectedBlog._id));
+          setSelectedBlog(null);
+          alert('Blog deleted successfully.');
+        } catch (err) {
+          alert('Failed to delete blog. Please try again.');
+        }
+      } else {
+        alert('You are not authorized to delete this blog.');
+      }
+  };
+
+  if (loading) return <Loader text='Loading User Profile' />;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
     <>
       {selectedBlog ? (
         <div className="p-6 max-w-4xl mx-20">
-              <button
-                onClick={handleBackToProfile}
-                className="absolute z-1 mt-3 ml-3 text-blue-500 bg-white rounded-full p-2 hover:text-blue-700 mb-4"
-              >
-                <FaArrowLeft />
-              </button>
+          <button
+            onClick={handleBackToProfile}
+            className="absolute z-1 mt-3 ml-3 text-blue-500 bg-white rounded-full p-2 hover:text-blue-700 mb-4"
+          >
+            <FaArrowLeft />
+          </button>
           {currentUserId === userId && (
             <>
               <button
@@ -125,6 +141,12 @@ const UserProfile = () => {
                 className="absolute z-1 mt-3 ml-[800px] p-2 bg-white rounded-full text-blue-500 hover:text-blue-700"
               >
                 <FaEdit />
+              </button>
+              <button
+                onClick={handleDelete}
+                className="absolute z-1 mt-3 ml-[756px] p-2 bg-white rounded-full text-red-500 hover:text-red-700"
+              >
+                <FaTrashAlt />
               </button>
             </>
           )}

@@ -74,10 +74,10 @@ const BlogCreate = () => {
 
   return (
     <div className="max-w-5xl mt-12 mx-auto p-8 bg-white shadow-lg">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Create a New Blog Post</h1>
+      <h1 className="text-4xl font-bold mb-6 text-gray-800">Create a New Blog Post</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+          <label htmlFor="title" className="block text-lg font-medium text-gray-700">Title</label>
           <input
             type="text"
             id="title"
@@ -89,7 +89,7 @@ const BlogCreate = () => {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">Image</label>
+          <label htmlFor="image" className="block text-lg font-medium text-gray-700">Image</label>
           <input
             type="file"
             id="image"
@@ -110,7 +110,7 @@ const BlogCreate = () => {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+          <label htmlFor="category" className="block text-lg font-medium text-gray-700">Category</label>
           <input
             type="text"
             id="category"
@@ -121,23 +121,24 @@ const BlogCreate = () => {
           />
         </div>
 
-        <div className="mb-6">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+          <div className="mb-6">
+          <label htmlFor="description" className="block text-lg font-medium text-gray-700 mb-2">Description</label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
             rows="4"
-            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+            className="bg-white text-xl min-h-[400px] block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-xl p-4"
           ></textarea>
-        </div>
+          </div>
+
 
         <div className="flex items-center justify-between">
           <button
             type="submit"
             disabled={loading}
-            className={`inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white ${loading ? 'bg-gray-500' : 'bg-blue-600 hover:bg-blue-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+            className={`inline-flex items-center px-6 py-3 text-lg border border-transparent font-medium rounded-md shadow-sm text-white ${loading ? 'bg-gray-500' : 'bg-blue-600 hover:bg-blue-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
           >
             {loading ? 'Submitting...' : 'Create Blog'}
           </button>
