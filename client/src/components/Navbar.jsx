@@ -1,7 +1,6 @@
-// Navbar.js
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from './auth/AuthContext'; // Adjust the path as needed
+import { useAuth } from '../components/auth/AuthContext'; // Adjust the import path
 import { FaUserCircle, FaSignOutAlt, FaChevronRight, FaSignInAlt } from 'react-icons/fa';
 
 const Navbar = () => {
@@ -41,14 +40,14 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              {isLoggedIn ? (
+              {isLoggedIn && (
                 <Link
                   to="/create-blog"
                   className={`text-white font-bold border-b-2 transition ${isActive('/create-blog') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
                 >
                   CREATE
                 </Link>
-              ) : null}
+              )}
             </li>
             <li>
               <Link
@@ -87,7 +86,10 @@ const Navbar = () => {
                     User Profile
                   </Link>
                   <button
-                    onClick={logout}
+                    onClick={() => {
+                      logout();
+                      setShowDropdown(false); // Close dropdown after logout
+                    }}
                     className="flex items-center p-2 hover:bg-gray-100 w-full text-left"
                   >
                     <FaSignOutAlt className="mr-2" />

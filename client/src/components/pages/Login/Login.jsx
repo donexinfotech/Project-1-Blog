@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaUserAlt, FaLock } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../api/userApi';
+import { useAuth } from '../../auth/AuthContext';
 
 function Login() {
   const { login } = useAuth();
@@ -14,13 +14,13 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); // Reset error message before making a new request
+    setError(null);
 
     try {
       await login(username, password);
-      navigate('/'); // Redirect to home page on successful login
+      navigate('/');
     } catch (error) {
-      setError(error.message || 'Login failed!'); // Set error message if login fails
+      setError(error.message || 'Login failed!');
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,7 @@ function Login() {
                 className="appearance-none bg-transparent border-none w-full text-gray-700 leading-tight focus:outline-none"
                 id="username"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -68,13 +68,13 @@ function Login() {
             </div>
           </div>
           
-            {error && (
+          {error && (
             <div className="mt-2 mb-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
               {error}
             </div>
           )}
           <div className="flex flex-col items-center justify-between gap-4">
-            <span>Don't have an account yet?<Link to="/register" className="text-blue-500 ml-3">Register</Link></span>
+            <span>Don't have an account yet? <Link to="/register" className="text-blue-500 ml-3">Register</Link></span>
             <button
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
               type="submit"

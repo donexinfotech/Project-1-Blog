@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, registerUser, logoutUser, getToken } from '../../api/userApi'; // Adjust the path as needed
+import { loginUser, registerUser, logoutUser, getToken } from '../../api/userApi';
 
 const AuthContext = createContext();
 
@@ -14,6 +14,10 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUsername(localStorage.getItem('username'));
       setProfilePicture(localStorage.getItem('profilePicture'));
+    } else {
+      setIsLoggedIn(false);
+      setUsername(null);
+      setProfilePicture(null);
     }
   }, []);
 
@@ -23,7 +27,6 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUsername(data.username);
       setProfilePicture(data.profile_picture);
-      return data;
     } catch (error) {
       setIsLoggedIn(false);
       throw error;
@@ -36,7 +39,6 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUsername(data.username);
       setProfilePicture(data.profile_picture);
-      return data;
     } catch (error) {
       setIsLoggedIn(false);
       throw error;
