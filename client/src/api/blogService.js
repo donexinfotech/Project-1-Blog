@@ -37,3 +37,13 @@ export const getBlogById = async (id)=>{
         console.log(error);
     }
 };
+
+export const searchBlogsByKey = async (key) => {
+  try {
+    const response = await axios.get(`/api/blog/search/${key}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching blogs', error);
+    throw error;
+  }
+};

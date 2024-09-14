@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
 import { updateBlogById, deleteBlogById } from '../../api/blogService';
 import { FaArrowLeft, FaEdit, FaTrashAlt } from 'react-icons/fa';
@@ -7,7 +7,6 @@ import Loader from '../utils/Loader';
 
 const UserProfile = () => {
   const { id: userId } = useParams();
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
