@@ -73,4 +73,23 @@ const getUserById = async (req, res) =>{
     }
 }
 
-module.exports = {Register, Login, getUserById};
+const updateUser = async (req, res)=>{
+    try {
+        const id = req.params.id
+        const data = req.body
+
+        const updatedUser = await User.updateOne(
+            {_id : id},
+            {$set : data}
+        )
+
+        res.status(200).json({ message: "User updated successfully", data });
+    } catch (error) {
+        res.status(500).json({
+            message: "An error occurred while updating the user",
+            error: error.message
+        });
+    }
+}
+
+module.exports = {Register, Login, getUserById, updateUser};

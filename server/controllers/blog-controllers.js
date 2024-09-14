@@ -106,4 +106,33 @@ const getBlogByCategory = async (req, res) =>{
     }
 }
 
-module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId, getBlogByCategory};
+const searchBlogs = async (req, res) => {
+    try {
+        const key = req.params.key;
+        const result = await Blog.find({
+            $or: [
+                { title: { $regex: key, $options: 'i' } },
+                { description: { $regex: key, $options: 'i' } },
+                { category: { $regex: key, $options: 'i' } }
+            ]
+        });
+        
+        console.log(result);
+
+        if (result.length === 0) {
+            return res.status(400).json({
+                message: "No blogs found"
+            });
+        }
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Server error"
+        });
+    }
+};
+
+
+module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId, getBlogByCategory, searchBlogs};
