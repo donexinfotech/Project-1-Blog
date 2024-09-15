@@ -120,7 +120,7 @@ const searchBlogs = async (req, res) => {
         console.log(result);
 
         if (result.length === 0) {
-            return res.status(400).json({
+            return res.status(200).json({
                 message: "No blogs found"
             });
         }

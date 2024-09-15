@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchBlogs, getBlogById } from '../../api/blogService';
+import { fetchBlogs, getBlogById, fetchBlogsByCategory, searchBlogsByKey } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
 import BlogDetails from '../blog/blogDetails';
 import Loader from '../utils/Loader';
@@ -9,16 +9,22 @@ const Home = () => {
   const [blogs, setBlogs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingUsers, setLoadingUsers] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [selectedTopPost, setSelectedTopPost] = useState(null);
   const [sortOrder, setSortOrder] = useState('desc');
   const [category, setCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchError, setSearchError] = useState(null);
   const blogsPerPage = 6;
 
-  const fetchUserData = async (blogsData) => {
+  const fetchBlogsAndUsers = useCallback(async () => {
+    setLoading(true);
+    setLoadingUsers(true);
     try {
+      const blogsData = await fetchBlogs();
       const updatedBlogs = await Promise.all(
         blogsData.map(async (blog) => {
           try {
@@ -27,12 +33,13 @@ const Home = () => {
             return {
               ...blog,
               user: {
-                username: userData.message.username || 'Unknown',
-                profile_picture: userData.message.profile_picture || 'default-pic-url',
-                _id: userData.message._id || 'default-id'
+                username: userData.message?.username || 'Unknown',
+                profile_picture: userData.message?.profile_picture || 'default-pic-url',
+                _id: userData.message?._id || 'default-id'
               }
             };
           } catch (error) {
+            console.error('Failed to fetch user data for blog:', blog._id, error);
             return {
               ...blog,
               user: { username: 'Unknown', profile_picture: 'default-pic-url', _id: 'default-id' }
@@ -40,12 +47,16 @@ const Home = () => {
           }
         })
       );
+
       setBlogs(updatedBlogs);
-      applyCategoryFilter(category, updatedBlogs); 
+      applyCategoryFilter(category, updatedBlogs);
     } catch (error) {
       setError(error.message);
+    } finally {
+      setLoading(false);
+      setLoadingUsers(false);
     }
-  };
+  }, [category]);
 
   const applyCategoryFilter = (selectedCategory, blogsData) => {
     if (selectedCategory === 'all') {
@@ -57,23 +68,66 @@ const Home = () => {
     setCurrentPage(1);
   };
 
-  useEffect(() => {
-    const getBlogs = async () => {
-      try {
-        const blogsData = await fetchBlogs();
-        await fetchUserData(blogsData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const handleSearch = async () => {
+    setSelectedBlog(null)
+    setLoading(true);
+    setSearchError(null);
+    setFilteredBlogs([]);
+    try {
+      const searchResults = await searchBlogsByKey(searchQuery);
+      if (searchResults.length === 0) {
+        setSearchError('No Blogs Found');
+        setFilteredBlogs([]); // Ensure filteredBlogs is cleared
+      } else {
+        const updatedResults = await Promise.all(
+          searchResults.map(async (blog) => {
+            try {
+              const response = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
+              const userData = await response.json();
+              return {
+                ...blog,
+                user: {
+                  username: userData.message?.username || 'Unknown',
+                  profile_picture: userData.message?.profile_picture || 'default-pic-url',
+                  _id: userData.message?._id || 'default-id'
+                }
+              };
+            } catch (error) {
+              console.error('Failed to fetch user data for blog:', blog._id, error);
+              return {
+                ...blog,
+                user: { username: 'Unknown', profile_picture: 'default-pic-url', _id: 'default-id' }
+              };
+            }
+          })
+        );
+        setFilteredBlogs(updatedResults);
       }
-    };
-    getBlogs();
-  }, []);
+      setCurrentPage(1);
+    } catch (error) {
+      setSearchError('No Blogs Found')
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleCategory = (selectedCategory) => {
+  useEffect(() => {
+    fetchBlogsAndUsers();
+  }, [fetchBlogsAndUsers]);
+
+  const handleCategory = async (selectedCategory) => {
+    if (selectedCategory === category) return;
+    setLoading(true);
     setCategory(selectedCategory);
-    applyCategoryFilter(selectedCategory, blogs); 
+    setSearchError(null);
+    try {
+      const blogsData = selectedCategory === 'all' ? await fetchBlogs() : await fetchBlogsByCategory(selectedCategory);
+      applyCategoryFilter(selectedCategory, blogsData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const sortedBlogs = [...filteredBlogs].sort((a, b) => {
@@ -85,13 +139,11 @@ const Home = () => {
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = sortedBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
-
   const topPosts = [...filteredBlogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
 
   const handleBlogClick = async (id) => {
+    setLoading(true);
     try {
       const blogData = await getBlogById(id);
       if (blogData) {
@@ -101,6 +153,8 @@ const Home = () => {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +164,7 @@ const Home = () => {
   };
 
   const handleTopPostClick = async (id) => {
+    setLoading(true);
     try {
       const blogData = await getBlogById(id);
       if (blogData) {
@@ -119,6 +174,8 @@ const Home = () => {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,7 +183,14 @@ const Home = () => {
     setSortOrder((prevOrder) => (prevOrder === 'desc' ? 'asc' : 'desc'));
   };
 
-  if (loading) return <Loader text='Loading Blogs Hang On'/>;
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const hasBlogsForCategory = (category) => {
+    if (category === 'all') return true;
+    return blogs.some(blog => blog.category === category);
+  };
+
+  if (loading || loadingUsers) return <Loader text='Loading Blogs, Hang On' />;
 
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
@@ -139,8 +203,10 @@ const Home = () => {
               type="text"
               placeholder="Search blogs..."
               className="bg-white focus:outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button>
+            <button onClick={handleSearch}>
               <FaSearch />
             </button>
           </div>
@@ -148,46 +214,16 @@ const Home = () => {
           <div className="mb-6 rounded-lg bg-gray-100 pl-3">
             <h3 className="text-xl text-blue-700 mb-2 pt-2 font-bold">Categories</h3>
             <ul className="space-y-2">
-              <li>
-                <button
-                  className={`w-full text-left p-2 font-bold ${category === 'all' ? 'text-blue-700' : 'text-red-600'}`}
-                  onClick={() => handleCategory('all')}
-                >
-                  All Blogs
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`w-full text-left p-2 font-bold ${category === 'technology' ? 'text-blue-700' : 'text-red-600'}`}
-                  onClick={() => handleCategory("technology")}
-                >
-                  Technology
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`w-full text-left p-2 font-bold ${category === 'health' ? 'text-blue-700' : 'text-red-600'}`}
-                  onClick={() => handleCategory("health")}
-                >
-                  Health
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`w-full text-left p-2 font-bold ${category === 'finance' ? 'text-blue-700' : 'text-red-600'}`}
-                  onClick={() => handleCategory("finance")}
-                >
-                  Finance
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`w-full text-left p-2 font-bold ${category === 'education' ? 'text-blue-700' : 'text-red-600'}`}
-                  onClick={() => handleCategory("education")}
-                >
-                  Education
-                </button>
-              </li>
+              {['all', 'technology', 'health', 'finance', 'education'].map((cat) => (
+                <li key={cat}>
+                  <button
+                    className={`w-full text-left p-2 font-bold ${category === cat && hasBlogsForCategory(cat) ? 'text-red-600' : 'text-blue-700'}`}
+                    onClick={() => handleCategory(cat)}
+                  >
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -222,66 +258,66 @@ const Home = () => {
             <BlogDetails selectedBlog={selectedBlog || selectedTopPost} handleBackToBlogs={handleBackToBlogs} />
           ) : (
             <>
+              {searchError && <p className="text-center text-black">{searchError}</p>}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-                {currentBlogs.map((blog) => {
-                  if (!blog || !blog.user) {
-                    console.error('Blog or user data is missing:', blog);
-                    return null;
-                  }
-
-                  return (
-                    <div
-                      key={blog._id}
-                      onClick={() => handleBlogClick(blog._id)}
-                      className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-                    >
-                      <img
-                        src={`data:image/jpeg;base64,${blog.image}`}
-                        alt={blog.title}
-                        className="w-full h-48 object-cover"
-                      />
-                      <div className="flex items-center m-4 mb-0 justify-between">
-                        <Link to={`/user/${blog.user._id}`} className="flex">
-                          <img
-                            src={`data:image/jpeg;base64,${blog.user.profile_picture}`}
-                            alt={blog.user?.username || 'Unknown'}
-                            className="w-8 h-8 rounded-full mr-2"
-                          />
-                          <p>{blog.user?.username || 'Unknown'}</p>
-                        </Link>
-                        <div>
-                          <p className="text-gray-500 text-sm">
-                            <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
-                          </p>
+                {filteredBlogs.length > 0 ? (
+                  currentBlogs.map((blog) => (
+                    blog ? (
+                      <div
+                        key={blog._id}
+                        onClick={() => handleBlogClick(blog._id)}
+                        className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                      >
+                        <img
+                          src={`data:image/jpeg;base64,${blog.image}`}
+                          alt={blog.title}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="flex items-center m-4 mb-0 justify-between">
+                          <Link to={`/user/${blog.user?._id || 'default-id'}`} className="flex">
+                            <img
+                              src={`data:image/jpeg;base64,${blog.user?.profile_picture || 'default-pic-url'}`}
+                              alt={blog.user?.username || 'Unknown'}
+                              className="w-8 h-8 rounded-full mr-2"
+                            />
+                            <p>{blog.user?.username || 'Unknown'}</p>
+                          </Link>
+                          <div>
+                            <p className="text-gray-500 text-sm">
+                              <em>Created on: {new Date(blog.created_at).toLocaleDateString()}</em>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <h2 className="text-xl font-semibold text-red-600">{blog.title}</h2>
+                          <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
                         </div>
                       </div>
-                      <div className="p-4">
-                        <h2 className="text-xl font-semibold text-red-600">{blog.title}</h2>
-                        <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    ) : null
+                  ))
+                ) : (
+                  !searchError && <p className="text-center text-gray-500">No Blogs Found</p>
+                )}
               </div>
 
-              <div className="flex justify-center mt-6">
-                <nav>
-                  <ul className="flex">
-                    {Array.from({ length: totalPages }).map((_, index) => (
-                      <li key={index + 1}>
-                        <button
-                          onClick={() => paginate(index + 1)}
-                          className={`px-4 py-2 mx-1 rounded-md ${
-                            currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'
-                          }`}
-                        >
-                          {index + 1}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              </div>
+              {filteredBlogs.length > 0 && (
+                <div className="flex justify-center mt-6">
+                  <nav>
+                    <ul className="flex">
+                      {Array.from({ length: totalPages }).map((_, index) => (
+                        <li key={index + 1}>
+                          <button
+                            onClick={() => paginate(index + 1)}
+                            className={`px-4 py-2 mx-1 rounded-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                          >
+                            {index + 1}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                </div>
+              )}
             </>
           )}
         </div>

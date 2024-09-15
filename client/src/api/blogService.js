@@ -38,6 +38,19 @@ export const getBlogById = async (id)=>{
     }
 };
 
+export const fetchBlogsByCategory = async (category) => {
+  try {
+    const response = await fetch(`/api/blog/get-blog-by-category/${category}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch blogs for category ${category}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching blogs for category ${category}:`, error);
+    throw error;
+  }
+};
+
 export const searchBlogsByKey = async (key) => {
   try {
     const response = await axios.get(`/api/blog/search/${key}`);
