@@ -1,7 +1,7 @@
 const User = require("../models/user-model");
 const jwt = require("jsonwebtoken");
 const bycrypt = require("bcryptjs");
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const Register = async (req, res) => {
   try {
@@ -107,15 +107,25 @@ const updateUser = async (req, res) => {
 const sendResetMail = async (req, res) => {
   const { email } = req.body;
 
-  const user = await User.findOne({email : email})
-  if(!user){
+  const user = await User.findOne({ email: email });
+  if (!user) {
     return res.status(400).json({
-        message : `${email} is not registered`
-    })
+      message: `${email} is not registered`,
+    });
   }
 
+  const token = jwt.sign(
+    {
+      email: email,
+    },
+    "DONEXBLOG",
+    {
+      expiresIn: "1d",
+    }
+  );
+
   try {
-    const resetLink = `http://localhost:3000/password-reset/${email}`;
+    const resetLink = `http://localhost:3000/password-reset/${email}/${token}`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -140,9 +150,9 @@ const sendResetMail = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({
-        message : "something went wrong",
-        error : error
-    })
+      message: "something went wrong",
+      error: error,
+    });
   }
 };
 
@@ -173,4 +183,11 @@ const passwordReset = async (req, res) => {
   }
 };
 
-module.exports = { Register, Login, getUserById, updateUser, passwordReset, sendResetMail };
+module.exports = {
+  Register,
+  Login,
+  getUserById,
+  updateUser,
+  passwordReset,
+  sendResetMail,
+};

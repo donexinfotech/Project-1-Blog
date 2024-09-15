@@ -27,7 +27,7 @@ function Pages() {
           <Route path="/create-blog" element={<Blogcreate />} />
           <Route path="/user/:id" element={<UserProfile />} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
-          <Route path="/password-reset/:email" element={<PasswordReset/>} />
+          <Route path="/password-reset/:email/:token" element={<PasswordReset/>} />
         </Routes>
     </Router>
     </AuthProvider>
