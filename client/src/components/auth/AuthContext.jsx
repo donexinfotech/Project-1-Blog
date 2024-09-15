@@ -1,13 +1,12 @@
-// AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, registerUser, logoutUser, getToken } from '../../api/userApi'; // Make sure to include updateUser function
-
+import { loginUser, registerUser, logoutUser, getToken, updateUserById } from '../../api/userApi';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
+  const [isProfileUpdated, setIsProfileUpdated] = useState(false);
 
   useEffect(() => {
     const token = getToken();
@@ -28,6 +27,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUsername(data.username);
       setProfilePicture(data.profile_picture);
+      setIsProfileUpdated(false);
     } catch (error) {
       setIsLoggedIn(false);
       throw error;
@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       setUsername(data.username);
       setProfilePicture(data.profile_picture);
+      setIsProfileUpdated(false);
     } catch (error) {
       setIsLoggedIn(false);
       throw error;
@@ -51,11 +52,33 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUsername(null);
     setProfilePicture(null);
+    setIsProfileUpdated(false); 
   };
 
+  const updateProfile = async (userId, updatedUser) => {
+    try {
+      await updateUserById(userId, updatedUser);
+      setUsername(updatedUser.username);
+      setProfilePicture(updatedUser.profile_picture);
+      setIsProfileUpdated(true); 
+      localStorage.setItem('username', updatedUser.username);
+      localStorage.setItem('profilePicture', updatedUser.profile_picture);
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, username, profilePicture, login, register, logout }}>
+    <AuthContext.Provider value={{ 
+      isLoggedIn, 
+      username, 
+      profilePicture, 
+      isProfileUpdated, 
+      login, 
+      register, 
+      logout, 
+      updateProfile 
+    }}>
       {children}
     </AuthContext.Provider>
   );

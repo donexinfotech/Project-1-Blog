@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchUserById, fetchUserBlogs, updateUserById } from '../../api/userApi';
+import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
 import { updateBlogById, deleteBlogById } from '../../api/blogService';
 import { FaArrowLeft, FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { useAuth } from '../auth/AuthContext';
 import Loader from '../utils/Loader';
 
 const UserProfile = () => {
   const { id: userId } = useParams();
+  const { updateProfile } = useAuth();
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +26,7 @@ const UserProfile = () => {
   const [editUsername, setEditUsername] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [newProfilePicture, setNewProfilePicture] = useState('');
+  const [profilePicturePreview, setProfilePicturePreview] = useState(''); // New state for profile picture preview
 
   useEffect(() => {
     const getUserData = async () => {
@@ -36,6 +39,7 @@ const UserProfile = () => {
         setEditLastName(userData.message.last_name);
         setEditUsername(userData.message.username);
         setEditEmail(userData.message.email);
+        setProfilePicturePreview(userData.message.profile_picture); // Set initial preview
 
         const blogsData = await fetchUserBlogs(userId);
         setBlogs(blogsData);
@@ -141,7 +145,7 @@ const UserProfile = () => {
     };
 
     try {
-      await updateUserById(userId, updatedUser);
+      await updateProfile(userId, updatedUser);
       setUser({ ...user, message: updatedUser });
       localStorage.setItem('profilePicture', newProfilePicture || user.message.profile_picture);
       localStorage.setItem('username', editUsername);
@@ -158,6 +162,7 @@ const UserProfile = () => {
     setEditUsername(user.message.username);
     setEditEmail(user.message.email);
     setNewProfilePicture('');
+    setProfilePicturePreview(user.message.profile_picture); // Reset preview
   };
 
   const handleProfilePictureChange = (e) => {
@@ -166,6 +171,7 @@ const UserProfile = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setNewProfilePicture(reader.result.split(',')[1]);
+        setProfilePicturePreview(reader.result.split(',')[1]); // Update preview
       };
       reader.readAsDataURL(file);
     }
@@ -292,7 +298,7 @@ const UserProfile = () => {
               <div className="flex items-center space-x-6 gap-10">
                 <div className="flex-shrink-0">
                   <img
-                    src={`data:image/jpeg;base64,${user.message.profile_picture}`}
+                    src={`data:image/jpeg;base64,${profilePicturePreview}`} // Display the preview or original picture
                     alt={user.message.username}
                     className="w-64 h-64 object-cover border-2 border-gray-300"
                   />
