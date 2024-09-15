@@ -75,6 +75,8 @@ function Login() {
           )}
           <div className="flex flex-col items-center justify-between gap-4">
             <span>Don't have an account yet? <Link to="/register" className="text-blue-500 ml-3">Register</Link></span>
+            <span >Forgot Password? <Link to="/forgot-password" className="text-blue-500 ml-3">forgot password</Link>
+            </span>
             <button
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
               type="submit"

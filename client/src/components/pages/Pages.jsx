@@ -7,6 +7,7 @@ import Blogcreate from '../blog/blogCreate';
 import Register from './Login/Register';
 import UserProfile from '../user/userProfile';
 import { AuthProvider } from '../auth/AuthContext';
+import ForgotPassword from './Login/ForgotPassword';
 
 function Pages() {
   return (
@@ -24,6 +25,7 @@ function Pages() {
           <Route path="/register" element={<Register />} />
           <Route path="/create-blog" element={<Blogcreate />} />
           <Route path="/user/:id" element={<UserProfile />} />
+          <Route path="/forgot-password" element={<ForgotPassword/>} />
         </Routes>
     </Router>
     </AuthProvider>
