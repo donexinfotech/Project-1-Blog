@@ -115,7 +115,7 @@ const sendResetMail = async (req, res) => {
   }
 
   try {
-    const resetLink = `http://localhost:3000/password-reset/${email}`;
+    const resetLink = `http://localhost:3000/api/auth/password-reset/${email}`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
