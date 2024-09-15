@@ -8,6 +8,7 @@ import Register from './Login/Register';
 import UserProfile from '../user/userProfile';
 import { AuthProvider } from '../auth/AuthContext';
 import ForgotPassword from './Login/ForgotPassword';
+import PasswordReset from './Login/PasswordReset';
 
 function Pages() {
   return (
@@ -26,6 +27,7 @@ function Pages() {
           <Route path="/create-blog" element={<Blogcreate />} />
           <Route path="/user/:id" element={<UserProfile />} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
+          <Route path="/password-reset/:email" element={<PasswordReset/>} />
         </Routes>
     </Router>
     </AuthProvider>
