@@ -1,5 +1,6 @@
+// AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, registerUser, logoutUser, getToken } from '../../api/userApi';
+import { loginUser, registerUser, logoutUser, getToken } from '../../api/userApi'; // Make sure to include updateUser function
 
 const AuthContext = createContext();
 
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }) => {
     setUsername(null);
     setProfilePicture(null);
   };
+
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, username, profilePicture, login, register, logout }}>

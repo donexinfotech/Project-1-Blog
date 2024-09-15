@@ -71,3 +71,17 @@ export const logoutUser = () => {
   localStorage.removeItem(USERNAME_KEY);
   localStorage.removeItem(PROFILE_PICTURE_KEY);
 };
+
+export const updateUserById = async (id, updatedData) => {
+  try {
+    const token = getToken();
+    const response = await axios.patch(`/api/auth/update/${id}`, updatedData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Update failed');
+  }
+};

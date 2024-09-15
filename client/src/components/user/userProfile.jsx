@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
+import { fetchUserById, fetchUserBlogs, updateUserById } from '../../api/userApi';
 import { updateBlogById, deleteBlogById } from '../../api/blogService';
 import { FaArrowLeft, FaEdit, FaTrashAlt } from 'react-icons/fa';
 import Loader from '../utils/Loader';
@@ -18,16 +18,24 @@ const UserProfile = () => {
   const [editImage, setEditImage] = useState('');
   const [editCategory, setEditCategory] = useState('');
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editUsername, setEditUsername] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [newProfilePicture, setNewProfilePicture] = useState('');
 
   useEffect(() => {
     const getUserData = async () => {
       try {
-        if (!userId) {
-          throw new Error('User ID not found in URL');
-        }
+        if (!userId) throw new Error('User ID not found in URL');
 
         const userData = await fetchUserById(userId);
         setUser(userData);
+        setEditFirstName(userData.message.first_name);
+        setEditLastName(userData.message.last_name);
+        setEditUsername(userData.message.username);
+        setEditEmail(userData.message.email);
 
         const blogsData = await fetchUserBlogs(userId);
         setBlogs(blogsData);
@@ -42,7 +50,6 @@ const UserProfile = () => {
   }, [userId]);
 
   useEffect(() => {
-    // Retrieve userId from localStorage
     const localStorageUserId = localStorage.getItem('userId');
     setCurrentUserId(localStorageUserId);
   }, []);
@@ -53,11 +60,11 @@ const UserProfile = () => {
     setEditDescription(blog.description);
     setEditImage(blog.image);
     setEditCategory(blog.category || '');
-    setIsEditing(false); 
+    setIsEditing(false);
   };
 
   const handleBackToProfile = () => {
-    setSelectedBlog(null); 
+    setSelectedBlog(null);
   };
 
   const handleEditClick = () => {
@@ -72,7 +79,7 @@ const UserProfile = () => {
       image: editImage,
       category: editCategory,
     };
-    
+
     try {
       await updateBlogById(selectedBlog._id, updatedBlog);
       const updatedBlogs = blogs.map(blog =>
@@ -107,17 +114,61 @@ const UserProfile = () => {
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this blog?')) {
-        try {
-          await deleteBlogById(selectedBlog._id);
-          setBlogs(blogs.filter(blog => blog._id !== selectedBlog._id));
-          setSelectedBlog(null);
-          alert('Blog deleted successfully.');
-        } catch (err) {
-          alert('Failed to delete blog. Please try again.');
-        }
-      } else {
-        alert('You are not authorized to delete this blog.');
+      try {
+        await deleteBlogById(selectedBlog._id);
+        setBlogs(blogs.filter(blog => blog._id !== selectedBlog._id));
+        setSelectedBlog(null);
+        alert('Blog deleted successfully.');
+      } catch (err) {
+        alert('Failed to delete blog. Please try again.');
       }
+    } else {
+      alert('You are not authorized to delete this blog.');
+    }
+  };
+
+  const handleProfileEditClick = () => {
+    setIsEditingProfile(true);
+  };
+
+  const handleProfileSaveChanges = async () => {
+    const updatedUser = {
+      first_name: editFirstName,
+      last_name: editLastName,
+      username: editUsername,
+      email: editEmail,
+      profile_picture: newProfilePicture || user.message.profile_picture,
+    };
+
+    try {
+      await updateUserById(userId, updatedUser);
+      setUser({ ...user, message: updatedUser });
+      localStorage.setItem('profilePicture', newProfilePicture || user.message.profile_picture);
+      localStorage.setItem('username', editUsername);
+      setIsEditingProfile(false);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleProfileCancelEdit = () => {
+    setIsEditingProfile(false);
+    setEditFirstName(user.message.first_name);
+    setEditLastName(user.message.last_name);
+    setEditUsername(user.message.username);
+    setEditEmail(user.message.email);
+    setNewProfilePicture('');
+  };
+
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewProfilePicture(reader.result.split(',')[1]);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (loading) return <Loader text='Loading User Profile' />;
@@ -247,13 +298,94 @@ const UserProfile = () => {
                   />
                 </div>
                 <div className='flex flex-col gap-2'>
-                  <h3 className="text-2xl font-bold font-mono text-gray-900">First name: {user.message.first_name.toUpperCase()}</h3>
-                  <h3 className="text-2xl font-bold font-mono text-gray-900">Last name: {user.message.last_name.toUpperCase()}</h3>
-                  <h3 className="text-2xl font-bold font-sans text-gray-900">Username: @{user.message.username.toUpperCase()}</h3>
-                  <p className="text-blue-500 mt-2 font-bold font-sans text-2xl">Email: {user.message.email}</p>
-                  <div className="mt-2">
-                    <h2 className="text-2xl font-semibold text-gray-800">Number of Blog Posts: {blogs.length}</h2>
-                  </div>
+                  {isEditingProfile ? (
+                    <div>
+                      <h3 className="text-2xl font-bold font-mono text-gray-900">Edit Profile</h3>
+                      <form>
+                        <div className="mb-4">
+                          <label htmlFor="editFirstName" className="block text-sm font-medium text-gray-700">First Name</label>
+                          <input
+                            id="editFirstName"
+                            type="text"
+                            value={editFirstName}
+                            onChange={(e) => setEditFirstName(e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label htmlFor="editLastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+                          <input
+                            id="editLastName"
+                            type="text"
+                            value={editLastName}
+                            onChange={(e) => setEditLastName(e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label htmlFor="editUsername" className="block text-sm font-medium text-gray-700">Username</label>
+                          <input
+                            id="editUsername"
+                            type="text"
+                            value={editUsername}
+                            onChange={(e) => setEditUsername(e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label htmlFor="editEmail" className="block text-sm font-medium text-gray-700">Email</label>
+                          <input
+                            id="editEmail"
+                            type="email"
+                            value={editEmail}
+                            onChange={(e) => setEditEmail(e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label htmlFor="editProfilePicture" className="block text-sm font-medium text-gray-700">Profile Picture</label>
+                          <input
+                            id="editProfilePicture"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleProfilePictureChange}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                          />
+                        </div>
+                        <div className="flex justify-end gap-4">
+                          <button
+                            type="button"
+                            onClick={handleProfileSaveChanges}
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleProfileCancelEdit}
+                            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-2xl font-bold font-mono text-gray-900">First name: {user.message.first_name.toUpperCase()}</h3>
+                      <h3 className="text-2xl font-bold font-mono text-gray-900">Last name: {user.message.last_name.toUpperCase()}</h3>
+                      <h3 className="text-2xl font-bold font-sans text-gray-900">Username: @{user.message.username.toUpperCase()}</h3>
+                      <p className="text-blue-500 mt-2 font-bold font-sans text-2xl">Email: {user.message.email}</p>
+                      {currentUserId === userId && (
+                        <button
+                          onClick={handleProfileEditClick}
+                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                        >
+                          Edit Profile
+                        </button>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             )}
