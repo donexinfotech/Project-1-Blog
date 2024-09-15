@@ -140,8 +140,23 @@ const sendResetMail = async (req, res) => {
       to: email,
       subject: "Password Reset Request",
       text: `Click the link to reset your password: ${resetLink}`,
-      html: `<p>Click the link below to reset your password:</p>
-                       <a href="${resetLink}">Reset Password</a>`,
+      html: `
+        <div style="text-align: center;">
+        <p>Click the button below to reset your password:</p>
+        <a href="${resetLink}" style="text-decoration: none;">
+            <button style="
+            background-color: #007BFF; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            cursor: pointer;">
+            Reset Password
+            </button>
+        </a>
+        </div>
+  `,
     };
 
     await transporter.sendMail(mailOptions);
