@@ -64,6 +64,7 @@ const Login = async (req, res) => {
         userId: userExist._id.toString(),
         username: userExist.username,
         profile_picture: userExist.profile_picture,
+        admin: userExist.isAdmin,
       });
     } else {
       res.status(401).json({

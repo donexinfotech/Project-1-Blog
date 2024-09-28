@@ -4,16 +4,18 @@ const TOKEN_KEY = 'authToken';
 const USER_ID = 'userId';
 const USERNAME_KEY = 'username';
 const PROFILE_PICTURE_KEY = 'profilePicture';
+const ADMIN = 'admin';
 
 export const loginUser = async (email, password) => {
   try {
     const response = await axios.post('/api/auth/login', { email, password });
-    const { token, userId, username, profile_picture } = response.data;
+    const { token, userId, username, profile_picture,admin } = response.data;
 
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_ID, userId);
     localStorage.setItem(USERNAME_KEY, username);
     localStorage.setItem(PROFILE_PICTURE_KEY, profile_picture);
+    localStorage.setItem(ADMIN, admin);
     
     return response.data;
   } catch (error) {
@@ -70,6 +72,7 @@ export const logoutUser = () => {
   localStorage.removeItem(USER_ID);
   localStorage.removeItem(USERNAME_KEY);
   localStorage.removeItem(PROFILE_PICTURE_KEY);
+  localStorage.removeItem(ADMIN);
 };
 
 export const updateUserById = async (id, updatedData) => {

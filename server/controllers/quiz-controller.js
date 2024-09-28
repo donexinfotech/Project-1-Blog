@@ -86,5 +86,20 @@ const getAllQuiz = async (req, res)=>{
         console.log(error);
     }
 }
+const getQuizById = async (req, res) => {
+    try {
+        const quizId = req.params.id;
+        const quiz = await Quiz.findById(quizId);
 
-module.exports = {addQuiz, answerQuiz, getAllQuiz}
+        if (!quiz) {
+            return res.status(404).json({ message: 'Quiz not found' });
+        }
+
+        res.status(200).json(quiz);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = {addQuiz, answerQuiz, getAllQuiz, getQuizById}

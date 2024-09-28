@@ -41,12 +41,20 @@ const Navbar = () => {
             </li>
             <li>
               {isLoggedIn && (
-                <Link
-                  to="/create-blog"
-                  className={`text-white font-bold border-b-2 transition ${isActive('/create-blog') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
-                >
-                  CREATE
-                </Link>
+                <div className='flex pt-2 gap-6'>
+                  <Link
+                    to="/create-blog"
+                    className={`text-white font-bold border-b-2 transition ${isActive('/create-blog') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
+                  >
+                    CREATE
+                  </Link>
+                  <Link
+                    to="/quiz"
+                    className={`text-white font-bold border-b-2 transition ${isActive('/quiz') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
+                  >
+                    QUIZ
+                  </Link>
+                </div>
               )}
             </li>
             <li>

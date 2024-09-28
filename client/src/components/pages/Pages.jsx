@@ -9,6 +9,9 @@ import UserProfile from '../user/userProfile';
 import { AuthProvider } from '../auth/AuthContext';
 import ForgotPassword from './Login/ForgotPassword';
 import PasswordReset from './Login/PasswordReset';
+import Quiz from '../quiz/Quiz'
+import AnswerQuiz from '../quiz/answerQuiz';
+import AddQuiz from '../quiz/addQuiz';
 
 function Pages() {
   return (
@@ -28,6 +31,9 @@ function Pages() {
           <Route path="/user/:id" element={<UserProfile />} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
           <Route path="/password-reset/:email/:token" element={<PasswordReset/>} />
+          <Route path="/quiz" element={<Quiz/>}/>
+          <Route path="/quiz/:id" element={<AnswerQuiz/>}/>
+          <Route path="/quiz/add" element={<AddQuiz/>}/>
         </Routes>
     </Router>
     </AuthProvider>
