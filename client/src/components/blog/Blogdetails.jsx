@@ -162,7 +162,7 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
               <button type="submit" className="bg-blue-500 text-white p-2 rounded">Post Comment</button>
             </form>
           ) : (
-            <p className="mt-6 font-extrabold text-red-500">Kindly Log In to add a comment.</p>
+            <p className="mt-8 font-extrabold text-red-500 text-center">Kindly Log In to add a comment.</p>
           )}
 
           {/* Success and Error Messages */}

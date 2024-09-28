@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
-import { updateBlogById, deleteBlogById } from '../../api/blogService';
+import { updateBlogById, deleteBlogById, fetchComments, postComment } from '../../api/blogService';
 import { FaArrowLeft, FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { useAuth } from '../auth/AuthContext';
 import Loader from '../utils/Loader';
@@ -26,8 +26,14 @@ const UserProfile = () => {
   const [editUsername, setEditUsername] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [newProfilePicture, setNewProfilePicture] = useState('');
-  const [profilePicturePreview, setProfilePicturePreview] = useState(''); // New state for profile picture preview
+  const [profilePicturePreview, setProfilePicturePreview] = useState('');
 
+  // New states for comments
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [newComment, setNewComment] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  
   useEffect(() => {
     const getUserData = async () => {
       try {
@@ -39,7 +45,7 @@ const UserProfile = () => {
         setEditLastName(userData.message.last_name);
         setEditUsername(userData.message.username);
         setEditEmail(userData.message.email);
-        setProfilePicturePreview(userData.message.profile_picture); // Set initial preview
+        setProfilePicturePreview(userData.message.profile_picture);
 
         const blogsData = await fetchUserBlogs(userId);
         setBlogs(blogsData);
@@ -58,17 +64,88 @@ const UserProfile = () => {
     setCurrentUserId(localStorageUserId);
   }, []);
 
-  const handleBlogClick = (blog) => {
+  
+  const handleBlogClick = async (blog) => {
     setSelectedBlog(blog);
     setEditTitle(blog.title);
     setEditDescription(blog.description);
     setEditImage(blog.image);
     setEditCategory(blog.category || '');
     setIsEditing(false);
+    await fetchBlogComments(blog._id);
   };
+
+
+  const fetchBlogComments = async (blogId) => {
+    setLoadingComments(true);
+    try {
+      const fetchedComments = await fetchComments(blogId);
+      
+      const enrichedComments = await Promise.all(
+        fetchedComments.map(async (comment) => {
+          const userDetails = await fetchUserById(comment.commented_by); // Fetch user details by ID
+          return {
+            ...comment,
+            commented_by: {
+              username: userDetails.message.username,
+              profile_picture: userDetails.message.profile_picture,
+            },
+          };
+        })
+      );
+  
+      setComments(enrichedComments);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingComments(false);
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+  
+    const userId = localStorage.getItem('userId');
+    const username = localStorage.getItem('username') || 'Unknown User'; // Fallback
+    const profilePicture = localStorage.getItem('profilePicture') || 'placeholder-image-url'; // Fallback
+  
+    if (!userId) {
+      setError("User not logged in");
+      return;
+    }
+  
+    try {
+      const commentData = { comment: newComment, commented_by: userId };
+      const result = await postComment(selectedBlog._id, commentData);
+  
+      const isSelfComment = result.blog.comments[result.blog.comments.length - 1].commented_by === userId;
+  
+      setComments([...comments, {
+        _id: result.blog.comments[result.blog.comments.length - 1]._id,
+        comment: newComment,
+        commented_by: isSelfComment ? {
+          username: username,
+          profile_picture: profilePicture,
+        } : {
+          username: result.blog.comments[result.blog.comments.length - 1].commented_by_username, // Assuming your API provides this
+          profile_picture: result.blog.comments[result.blog.comments.length - 1].commented_by_profile_picture || 'placeholder-image-url', // Fallback for non-self comments
+        },
+        commented_on: new Date().toISOString(),
+      }]);
+  
+      setNewComment('');
+      setSuccessMessage('Comment added successfully!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+  
 
   const handleBackToProfile = () => {
     setSelectedBlog(null);
+    setComments([]);
   };
 
   const handleEditClick = () => {
@@ -126,8 +203,6 @@ const UserProfile = () => {
       } catch (err) {
         alert('Failed to delete blog. Please try again.');
       }
-    } else {
-      alert('You are not authorized to delete this blog.');
     }
   };
 
@@ -162,7 +237,7 @@ const UserProfile = () => {
     setEditUsername(user.message.username);
     setEditEmail(user.message.email);
     setNewProfilePicture('');
-    setProfilePicturePreview(user.message.profile_picture); // Reset preview
+    setProfilePicturePreview(user.message.profile_picture);
   };
 
   const handleProfilePictureChange = (e) => {
@@ -171,7 +246,7 @@ const UserProfile = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setNewProfilePicture(reader.result.split(',')[1]);
-        setProfilePicturePreview(reader.result.split(',')[1]); // Update preview
+        setProfilePicturePreview(reader.result.split(',')[1]);
       };
       reader.readAsDataURL(file);
     }
@@ -276,7 +351,7 @@ const UserProfile = () => {
                     </form>
                   </div>
                 ) : (
-                  <div>
+                  <div >
                     <h1 className="text-5xl font-bold mb-4 font-serif">{selectedBlog.title}</h1>
                     <p className="text-lg text-gray-700 mb-6">{selectedBlog.description}</p>
                     <p className="text-sm text-gray-500 mb-6">
@@ -290,6 +365,48 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
+
+          {/* Comments Section */}
+          <div className="p-4 mt-8 bg-white bg-opacity-90 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">Comments</h2>
+            {loadingComments ? (
+              <Loader text='Loading Comments...' />
+            ) : (
+              <div>
+                {comments.map(comment => (
+                  <div key={comment._id} className="border-b py-2">
+                    <div className="flex items-center">
+                      <img
+                        src={`data:image/jpeg;base64,${comment.commented_by.profile_picture || 'placeholder-image-url'}`} // Replace with actual profile picture URL if available
+                        alt={comment.commented_by.username}
+                        className="w-8 h-8 rounded-full mr-2"
+                      />
+                      <p className="font-semibold">{comment.commented_by.username}</p>
+                      <span className="text-gray-500 text-sm ml-2">
+                        {new Date(comment.commented_on).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="ml-10 text-gray-700">{comment.comment}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <form onSubmit={handleCommentSubmit} className="mt-4">
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add a comment..."
+                className="w-full border-gray-300 rounded-md shadow-sm p-2"
+              />
+              <button
+                type="submit"
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              >
+                Post Comment
+              </button>
+              {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
+            </form>
+          </div>
         </div>
       ) : (
         <div>
@@ -298,7 +415,7 @@ const UserProfile = () => {
               <div className="flex items-center space-x-6 gap-10">
                 <div className="flex-shrink-0">
                   <img
-                    src={`data:image/jpeg;base64,${profilePicturePreview}`} // Display the preview or original picture
+                    src={`data:image/jpeg;base64,${profilePicturePreview}`}
                     alt={user.message.username}
                     className="w-64 h-64 object-cover border-2 border-gray-300"
                   />
