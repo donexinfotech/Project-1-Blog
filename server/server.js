@@ -4,6 +4,7 @@ const app = express();
 const connectDb = require("./utils/db");
 const blogRouter = require("./router/blog-router");
 const authRouter = require("./router/auth-router");
+const commentRouter = require("./router/comment-router")
 
 app.use(cors({
   origin: '*',
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // Blog router
 app.use("/api/blog", blogRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/comment", commentRouter);
 
 // Root route
 app.get("/", (req, res) => {

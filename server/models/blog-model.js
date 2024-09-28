@@ -1,5 +1,20 @@
 const mongoose = require("mongoose");
 
+const commentSchema = new mongoose.Schema({
+    comment: {
+        type: String,
+        required: true
+    },
+    commented_by: {
+        type: String,
+        required: true
+    },
+    commented_on: {
+        type: Date,
+        default: Date.now
+    }
+});
+ 
 const blogSchema = new mongoose.Schema({
     title:{
         type:String,
@@ -24,7 +39,8 @@ const blogSchema = new mongoose.Schema({
     created_by:{
         type: String,
         default: "User"
-    } 
+    },
+    comments : [commentSchema]
 })
 
 const Blog = mongoose.model('Blog', blogSchema);
