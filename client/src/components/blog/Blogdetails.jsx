@@ -4,8 +4,10 @@ import { fetchUserById } from '../../api/userApi';
 import { Link } from 'react-router-dom';
 import Loader from '../utils/Loader';
 import { fetchComments, postComment } from '../../api/blogService';
+import { useAuth } from '../auth/AuthContext';
 
 const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
+  const { isLoggedIn } = useAuth(); // Fetch the authentication status
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -148,16 +150,20 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
           )}
 
           {/* Comment Input Form */}
-          <form onSubmit={handleCommentSubmit} className="mt-6">
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add your comment..."
-              required
-              className="w-full p-2 border rounded mb-2"
-            />
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">Post Comment</button>
-          </form>
+          {isLoggedIn ? (
+            <form onSubmit={handleCommentSubmit} className="mt-6">
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add your comment..."
+                required
+                className="w-full p-2 border rounded mb-2"
+              />
+              <button type="submit" className="bg-blue-500 text-white p-2 rounded">Post Comment</button>
+            </form>
+          ) : (
+            <p className="mt-6 font-extrabold text-red-500">Kindly Log In to add a comment.</p>
+          )}
 
           {/* Success and Error Messages */}
           {successMessage && <p className="text-green-500 mt-4">{successMessage}</p>}
