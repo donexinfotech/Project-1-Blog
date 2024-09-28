@@ -214,7 +214,7 @@ const Home = () => {
           <div className="mb-6 rounded-lg bg-gray-100 pl-3">
             <h3 className="text-xl text-blue-700 mb-2 pt-2 font-bold">Categories</h3>
             <ul className="space-y-2">
-              {['all', 'technology', 'health', 'finance', 'education'].map((cat) => (
+              {['all', 'Cyber Threats & Vulnerabilities', 'Cybersecurity Best Practices', 'Cybersecurity Tools & Solutions', 'Cryptography and Encryption','Compliance & Legal Aspects','Emerging Technologies in Cybersecurity','Incident Response & Management','Data Privacy and Protection','Security Awareness & Education'].map((cat) => (
                 <li key={cat}>
                   <button
                     className={`w-full text-left p-2 font-bold ${category === cat && hasBlogsForCategory(cat) ? 'text-red-600' : 'text-blue-700'}`}

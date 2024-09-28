@@ -20,7 +20,7 @@ const Navbar = () => {
   return (
     <nav className="p-4 bg-gradient-to-br from-lightskyblue via-rebeccapurple to-sandybrown">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">Name</h1>
+        <h1 className="text-2xl font-bold text-white">Cybi-Aware</h1>
         <div className="flex items-center space-x-6">
           <ul className="flex space-x-6 items-center">
             <li>
@@ -56,14 +56,6 @@ const Navbar = () => {
                   </Link>
                 </div>
               )}
-            </li>
-            <li>
-              <Link
-                to="/contact"
-                className={`text-white font-bold border-b-2 transition ${isActive('/contact') ? 'border-white' : 'border-transparent'} hover:border-white pb-2`}
-              >
-                CONTACT US
-              </Link>
             </li>
           </ul>
         </div>

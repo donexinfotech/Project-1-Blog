@@ -14,7 +14,6 @@ const BlogCreate = () => {
   const Token = localStorage.getItem('authToken');
 
   const handleImageChange = async (e) => {
-
     const file = e.target.files[0];
     if (file) {
       try {
@@ -30,7 +29,7 @@ const BlogCreate = () => {
         const reader = new FileReader();
         reader.onloadend = () => {
           setImage(reader.result.split(',')[1]);
-          setImagePreview(URL.createObjectURL(compressedFile)); // Set image preview
+          setImagePreview(URL.createObjectURL(compressedFile));
         };
         reader.readAsDataURL(compressedFile);
       } catch (error) {
@@ -59,11 +58,12 @@ const BlogCreate = () => {
             'Content-Type': 'application/json'
           }
         }
-      );;
+      );
       setSuccess('Blog post created successfully!');
       setTitle('');
       setImage('');
       setDescription('');
+      setCategory(''); // Reset category
       setImagePreview('');
     } catch (err) {
       setError('Failed to create blog post.');
@@ -111,17 +111,27 @@ const BlogCreate = () => {
 
         <div className="mb-6">
           <label htmlFor="category" className="block text-lg font-medium text-gray-700">Category</label>
-          <input
-            type="text"
+          <select
             id="category"
             value={category}
-            onChange={(e) =>{ setCategory(e.target.value); console.log(category)}}
+            onChange={(e) => setCategory(e.target.value)}
             required
             className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
-          />
+          >
+            <option value="" disabled>Select a category</option>
+            <option value="Cyber Threats & Vulnerabilities">Cyber Threats & Vulnerabilities</option>
+            <option value="Cybersecurity Best Practices">Cybersecurity Best Practices</option>
+            <option value="Cybersecurity Tools & Solutions">Cybersecurity Tools & Solutions</option>
+            <option value="Cryptography and Encryption">Cryptography and Encryption</option>
+            <option value="Compliance & Legal Aspects">Compliance & Legal Aspects</option>
+            <option value="Emerging Technologies in Cybersecurity">Emerging Technologies in Cybersecurity</option>
+            <option value="Incident Response & Management">Incident Response & Management</option>
+            <option value="Data Privacy and Protection">Data Privacy and Protection</option>
+            <option value="Security Awareness & Education">Security Awareness & Education</option>
+          </select>
         </div>
 
-          <div className="mb-6">
+        <div className="mb-6">
           <label htmlFor="description" className="block text-lg font-medium text-gray-700 mb-2">Description</label>
           <textarea
             id="description"
@@ -131,8 +141,7 @@ const BlogCreate = () => {
             rows="4"
             className="bg-white text-xl min-h-[400px] block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-xl p-4"
           ></textarea>
-          </div>
-
+        </div>
 
         <div className="flex items-center justify-between">
           <button
