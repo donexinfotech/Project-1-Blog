@@ -3,9 +3,24 @@ const User = require("../models/user-model");
 
 const addQuiz = async (req, res)=>{
     try {
-        const {question, options, correct_answer} = req.body
+        const {name, question, options, correct_answer} = req.body
 
-        const quiz = await Quiz.create({question, options, correct_answer});
+        const quiz = await Quiz.findOneAndUpdate(
+            { name: name },
+            { 
+              $push: { 
+                quiz: { 
+                  question: question,
+                  options: options,
+                  correct_answer: correct_answer 
+                }
+              }
+            },
+            { 
+              new: true,
+              upsert: true
+            }
+          );
 
         res.status(200).json({
             message : `Quiz created ${quiz}`
@@ -16,7 +31,7 @@ const addQuiz = async (req, res)=>{
 }
 
 const answerQuiz = async (req, res)=>{
-    try {
+    try{
         const userId = req.userID;
         const user = await User.findById(userId);
 
@@ -46,30 +61,41 @@ const answerQuiz = async (req, res)=>{
         }
 
         await user.save();
+        res.status(200).json({
+            attempt : user.quizActivity.questionsAttempted
+        })
+    }
+    catch(err){
+        console.log(err)
+    }
+}
 
-        const quizId = req.params.id
+const answerQuestions = async (req, res)=>{
+    try {
+        const quizId = req.params.quizid
+        const questionId = req.params.questionid
         const {answer} = req.body
 
-        const quiz = await Quiz.findOne({
-            _id : quizId
-        });
+        const quiz = await Quiz.findOne({ _id: quizId });
 
-        if(!quiz){
-            res.status(400).json({
-                message: "No quiz found"
-            })
+        if (!quiz) {
+            return res.status(404).json({ message: 'Quiz not found' });
         }
 
-        if(answer == quiz.correct_answer){
+        const question = quiz.quiz.id(questionId);
+
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        if(answer == question.correct_answer){
             res.status(200).json({
-                message: "Congratulations!!...Correct Answer",
-                attempts : user.quizActivity.questionsAttempted
+                message: "Congratulations!!...Correct Answer"
             })
         }
 
         res.status(200).json({
-            message: "Wrong Answer!!",
-            attempts : user.quizActivity.questionsAttempted
+            message: "Wrong Answer!!"
         })
         
 
@@ -86,6 +112,7 @@ const getAllQuiz = async (req, res)=>{
         console.log(error);
     }
 }
+
 const getQuizById = async (req, res) => {
     try {
         const quizId = req.params.id;
@@ -102,4 +129,4 @@ const getQuizById = async (req, res) => {
     }
 };
 
-module.exports = {addQuiz, answerQuiz, getAllQuiz, getQuizById}
+module.exports = {addQuiz,answerQuestions, answerQuiz, getAllQuiz, getQuizById}
