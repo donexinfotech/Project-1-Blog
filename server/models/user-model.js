@@ -2,6 +2,17 @@ const mongoose = require("mongoose");
 const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const quizActivitySchema = new mongoose.Schema({
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    questionsAttempted: {
+        type: Number,
+        default: 0
+    }
+});
+
 const userSchema = new mongoose.Schema({
     username : {
         type: String,
@@ -34,7 +45,8 @@ const userSchema = new mongoose.Schema({
     isAdmin:{
         type : Boolean,
         default: false
-    }
+    },
+    quizActivity : quizActivitySchema
 })
 
 userSchema.pre("save", async function(next){
