@@ -60,3 +60,30 @@ export const searchBlogsByKey = async (key) => {
     throw error;
   }
 };
+
+export const fetchComments = async (blogId) => {
+  const response = await fetch(`/api/comment/get/${blogId}`);
+  if (!response.ok) throw new Error('Failed to fetch comments');
+  return await response.json();
+};
+
+export const postComment = async (blogId, commentData) => {
+  try {
+      const response = await fetch(`/api/comment/${blogId}`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(commentData),
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to add comment');
+      }
+
+      return await response.json();
+  } catch (error) {
+      console.error('Error adding comment:', error);
+      throw new Error(error.message);
+  }
+};
