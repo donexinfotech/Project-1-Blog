@@ -7,6 +7,6 @@ router.route('/').get(getAllQuiz)
 router.route('/:id').get(getQuizById)
 router.route('/add').post(addQuiz)
 router.route('/answer/:quizid/:questionid').post(auth_middleware, answerQuestions)
-router.route('/answer/:quizid').get(auth_middleware, answerQuiz)
+router.route('/answer/:quizid').post(auth_middleware, answerQuiz)
 
 module.exports = router

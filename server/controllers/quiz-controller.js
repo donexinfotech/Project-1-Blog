@@ -90,12 +90,12 @@ const answerQuestions = async (req, res)=>{
 
         if(answer == question.correct_answer){
             res.status(200).json({
-                message: "Congratulations!!...Correct Answer"
+                message: "Correct"
             })
         }
 
         res.status(200).json({
-            message: "Wrong Answer!!"
+            message: "Wrong"
         })
         
 
