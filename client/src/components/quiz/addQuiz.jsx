@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaTrashAlt, FaPlus } from 'react-icons/fa';
 import quizService from '../../api/quizService';
 
 const AddQuiz = () => {
     const [quizName, setQuizName] = useState('');
     const [questions, setQuestions] = useState([{ question: '', options: ['', ''], correctAnswer: '' }]);
+
+    const navigate = useNavigate();
 
     const handleQuestionChange = (index, value) => {
         const updatedQuestions = [...questions];
@@ -67,12 +70,12 @@ const AddQuiz = () => {
                 }, {}),
             };
 
-            const response = await quizService.addQuiz(quizData); 
+            await quizService.addQuiz(quizData);
             alert(`Quiz created`);
             
-            // Reset form after submission
             setQuizName('');
             setQuestions([{ question: '', options: ['', ''], correctAnswer: '' }]); 
+            navigate('/quiz');
         } catch (error) {
             console.error("Error adding quiz:", error);
             alert("Failed to add quiz. Please check the console for errors.");

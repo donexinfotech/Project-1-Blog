@@ -18,14 +18,16 @@ export const updateBlogById = async (id, data) => {
   }
 };
 
-export const fetchBlogs = async () => {
-    try {
-        const response = await axios.get(`/api/blog/get-blogs`);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching blogs', error);
-        throw error;
-    }
+export const fetchBlogs = async (page = 1, limit = 6) => {
+  try {
+      const response = await axios.get(`/api/blog/get-blogs`, {
+          params: { page, limit }
+      });
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching blogs', error);
+      throw error;
+  }
 };
 
 
