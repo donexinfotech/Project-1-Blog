@@ -94,55 +94,108 @@ const getBlogById = async (req, res)=>{
                 "message" : "Please provide the id"
             });
         }
-        const blog = await Blog.findById(
+        const blogs = await Blog.findById(
             {_id : id},
         );
-        res.status(200).json(blog);
+        res.status(200).json(blogs);
     } catch (error) {
         console.log(error);
     }
 }
 
-const getBlogByUserId = async (req, res)=>{
+const getBlogByUserId = async (req, res) => {
     try {
         const id = req.params.id;
-        const blog = await Blog.find({created_by: id});
-        res.status(200).json(blog);
+        const page = parseInt(req.query.page) || 1; // Default to page 1
+        const limit = parseInt(req.query.limit) || 6; // Default to 10 items per page
+        const skip = (page - 1) * limit; // Calculate how many items to skip
+
+        const [blog, total] = await Promise.all([
+            Blog.find({ created_by: id }).skip(skip).limit(limit), // Fetch blogs with pagination
+            Blog.countDocuments({ created_by: id }) // Get total count of blogs for this user
+        ]);
+
+        res.status(200).json({
+            blog,
+            total,
+            totalPages: Math.ceil(total / limit), // Calculate total pages
+            currentPage: page
+        });
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
-const getBlogByCategory = async (req, res) =>{
+
+const getBlogByCategory = async (req, res) => {
     try {
         const category = req.params.category;
-        const blog = await Blog.find({category : category});
-        res.status(200).json(blog);
+        const page = parseInt(req.query.page) || 1; // Get page number from query, default to 1
+        const limit = parseInt(req.query.limit) || 10; // Get limit from query, default to 10
+        const skip = (page - 1) * limit; // Calculate the number of documents to skip
+
+        const blogs = await Blog.find({ category: category })
+            .skip(skip)
+            .limit(limit);
+        
+        // Get total count of blogs in the category for pagination
+        const totalBlogs = await Blog.countDocuments({ category: category });
+
+        res.status(200).json({
+            totalBlogs,
+            totalPages: Math.ceil(totalBlogs / limit),
+            currentPage: page,
+            blogs,
+        });
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
+
 
 const searchBlogs = async (req, res) => {
     try {
         const key = req.params.key;
+        const page = parseInt(req.query.page) || 1; // Current page
+        const limit = parseInt(req.query.limit) || 6; // Number of items per page
+        const skip = (page - 1) * limit; // Number of items to skip
+
         const result = await Blog.find({
             $or: [
                 { title: { $regex: key, $options: 'i' } },
                 { description: { $regex: key, $options: 'i' } },
                 { category: { $regex: key, $options: 'i' } }
             ]
+        })
+        .skip(skip)
+        .limit(limit);
+
+        const total = await Blog.countDocuments({
+            $or: [
+                { title: { $regex: key, $options: 'i' } },
+                { description: { $regex: key, $options: 'i' } },
+                { category: { $regex: key, $options: 'i' } }
+            ]
         });
-        
-        console.log(result);
+
+        const totalPages = Math.ceil(total / limit);
 
         if (result.length === 0) {
             return res.status(200).json({
-                message: "No blogs found"
+                message: "No blogs found",
+                totalPages,
+                currentPage: page,
+                blogs: []
             });
         }
 
-        res.status(200).json(result);
+        res.status(200).json({
+            totalPages,
+            currentPage: page,
+            blogs: result
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -150,6 +203,7 @@ const searchBlogs = async (req, res) => {
         });
     }
 };
+
 
 
 module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId, getBlogByCategory, searchBlogs};

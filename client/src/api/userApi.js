@@ -55,17 +55,20 @@ export const getToken = () => {
   return localStorage.getItem(TOKEN_KEY);
 };
 
-export const fetchUserBlogs = async (userId) => {
+export const fetchUserBlogs = async (userId, page = 1, limit = 6) => {
   try {
-    const response = await fetch(`/api/blog/get-blog-by-userid/${userId}`);
-    if (!response.ok) {
+    const responseData = await fetch(`/api/blog/get-blog-by-userid/${userId}?page=${page}&limit=${limit}`);
+    if (!responseData.ok) {
       throw new Error('Failed to fetch user blogs');
     }
-    return response.json();
+    const response = await responseData.json(); // Await the JSON parsing
+    return response; // Access the data property
   } catch (error) {
     throw new Error(error.message);
   }
 };
+
+
 
 export const logoutUser = () => {
   localStorage.removeItem(TOKEN_KEY);

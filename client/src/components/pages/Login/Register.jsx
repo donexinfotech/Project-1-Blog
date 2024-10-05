@@ -32,7 +32,7 @@ function Register() {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      
+
       reader.onloadend = () => {
         const base64String = reader.result.split(',')[1];
         setFormData((prevData) => ({
@@ -41,14 +41,19 @@ function Register() {
         }));
         setImagePreview(URL.createObjectURL(file));
       };
-      
+
       reader.onerror = (error) => {
         console.error('Error reading file:', error);
         setError('Failed to convert image to base64.');
       };
-      
-      reader.readAsDataURL(file); 
+
+      reader.readAsDataURL(file);
     }
+  };
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return passwordRegex.test(password);
   };
 
   const handleSubmit = async (e) => {
@@ -56,6 +61,11 @@ function Register() {
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match.');
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      setError('Password must contain At least One Uppercase letter(A-Z), One Lowercase letter(a-z), One number(0-9), and One Special Character.');
       return;
     }
 
@@ -74,7 +84,7 @@ function Register() {
         navigate('/login');
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'Registration failed.');
+        setError(errorData.message || 'Registration failed. User might already exist.');
       }
     } catch (error) {
       setError('An error occurred during registration.');
@@ -89,6 +99,7 @@ function Register() {
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-700">Register</h2>
 
         <form onSubmit={handleSubmit}>
+          {/* Profile Picture Input */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="profile_picture">
               Profile Picture
@@ -109,6 +120,7 @@ function Register() {
             )}
           </div>
 
+          {/* Other Input Fields (Username, Email, First Name, Last Name, Phone, Password, Confirm Password) */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
               Username
@@ -234,6 +246,8 @@ function Register() {
               />
             </div>
           </div>
+
+          {/* Error and Success Messages */}
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
               {error}
@@ -244,6 +258,8 @@ function Register() {
               {successMessage}
             </div>
           )}
+
+          {/* Submit Button and Login Link */}
           <div className="flex flex-col items-center justify-between gap-4">
             <span>Already have an account? <Link className="text-blue-500 ml-3" to="/login">Login</Link></span>
             <button

@@ -40,22 +40,25 @@ export const getBlogById = async (id)=>{
     }
 };
 
-export const fetchBlogsByCategory = async (category) => {
+export const fetchBlogsByCategory = async (category, page = 1, limit = 6) => {
   try {
-    const response = await fetch(`/api/blog/get-blog-by-category/${category}`);
+    const response = await fetch(`/api/blog/get-blog-by-category/${category}?page=${page}&limit=${limit}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch blogs for category ${category}`);
     }
-    return await response.json();
+
+    const data = await response.json();
+    return data; // Return the entire response data directly
   } catch (error) {
     console.error(`Error fetching blogs for category ${category}:`, error);
     throw error;
   }
 };
 
-export const searchBlogsByKey = async (key) => {
+
+export const searchBlogsByKey = async (key,page=1,limit=6) => {
   try {
-    const response = await axios.get(`/api/blog/search/${key}`);
+    const response = await axios.get(`/api/blog/search/${key}?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
     console.error('Error searching blogs', error);

@@ -28,8 +28,12 @@ const Home = () => {
   const [searchError, setSearchError] = useState(null);
   const [category, setCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentSearchPage, setCurrentSearchPage] = useState(1);
   const [limit] = useState(6);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalSearchPages, setTotalSearchPages] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
+  const prevSearchQuery=null;
 
   const fetchBlogsData = async (pageNumber = currentPage) => {
     setLoading(true);
@@ -83,26 +87,20 @@ const Home = () => {
     }
   };
 
-  const applyCategoryFilter = (selectedCategory) => {
-    setCategory(selectedCategory);
-    setCurrentPage(1);
-    if (selectedCategory === 'all') {
-      fetchBlogsData(1);
-    } else {
-      fetchBlogsDataByCategory(selectedCategory, 1);
-    }
-  };
-
-  const handleSearch = async () => {
+  const handleSearch = async (page=currentSearchPage) => {
     setLoading(true);
     setSearchError(null);
+    setIsSearching(true);
     try {
-      const searchResults = await searchBlogsByKey(searchQuery);
-      if (searchResults.length === 0) {
+      const searchResults = await searchBlogsByKey(searchQuery, page, limit);
+      console.log(searchResults);
+      
+      if (searchResults.blogs.length === 0) {
         setSearchError('No Blogs Found');
         setFilteredBlogs([]);
+        setTotalSearchPages(0);
       } else {
-        const updatedSearchResults = await Promise.all(searchResults.map(async (blog) => {
+        const updatedSearchResults = await Promise.all(searchResults.blogs.map(async (blog) => {
           const userResponse = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
           const userData = await userResponse.json();
           return {
@@ -115,6 +113,7 @@ const Home = () => {
           };
         }));
         setFilteredBlogs(updatedSearchResults);
+        setTotalSearchPages(searchResults.totalPages);
       }
     } catch (error) {
       setSearchError('No Blogs Found');
@@ -123,13 +122,31 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    if (category === 'all') {
-      fetchBlogsData(currentPage);
+  const applyCategoryFilter = (selectedCategory) => {
+    setCategory(selectedCategory);
+    setCurrentPage(1);
+    setCurrentSearchPage(1);
+    setIsSearching(false);
+
+    if (selectedCategory === 'all') {
+      fetchBlogsData(1);
     } else {
-      fetchBlogsDataByCategory(category, currentPage);
+      fetchBlogsDataByCategory(selectedCategory, 1);
     }
-  }, [currentPage, category]);
+  };
+
+  useEffect(() => {
+    if (isSearching) {
+      console.log(currentSearchPage);
+      handleSearch(currentSearchPage);
+    } else {
+      if (category === 'all') {
+        fetchBlogsData(currentPage);
+      } else {
+        fetchBlogsDataByCategory(category, currentPage);
+      }
+    }
+  }, [currentPage, currentSearchPage, category, isSearching]);
 
   const handleBlogClick = async (id) => {
     setLoading(true);
@@ -253,27 +270,40 @@ const Home = () => {
           {!selectedBlog && (
             <div className="flex justify-between items-center mt-6">
               <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                onClick={() => isSearching ? setCurrentSearchPage(prev => Math.max(prev - 1, 1)) : setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={isSearching ? currentSearchPage === 1 : currentPage === 1}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 hover:bg-blue-500"
               >
                 Previous
               </button>
-              <div className="flex space-x-2">
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => setCurrentPage(index + 1)}
-                    className={`px-4 py-2 rounded-lg ${currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
+              <div className="flex items-center space-x-4">
+                {(() => {
+                  const totalButtons = 3;
+                  let startPage = Math.max(1, isSearching ? currentSearchPage - Math.floor(totalButtons / 2) : currentPage - Math.floor(totalButtons / 2));
+                  let endPage = Math.min(isSearching ? totalSearchPages : totalPages, startPage + totalButtons - 1);
+
+                  if (endPage - startPage < totalButtons - 1) {
+                    startPage = Math.max(1, endPage - totalButtons + 1);
+                  }
+
+                  return Array.from({ length: Math.min(totalButtons, isSearching ? totalSearchPages : totalPages) }, (_, index) => {
+                    const page = startPage + index;
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => isSearching ? setCurrentSearchPage(page) : setCurrentPage(page)}
+                        className={`px-4 py-2 rounded-lg transition-colors duration-200 ${isSearching ? (currentSearchPage === page ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-200') : (currentPage === page ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-200')}`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  });
+                })()}
               </div>
               <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                onClick={() => isSearching ? setCurrentSearchPage(prev => Math.min(prev + 1, totalSearchPages)) : setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={isSearching ? currentSearchPage === totalSearchPages : currentPage === totalPages}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 hover:bg-blue-500"
               >
                 Next
               </button>

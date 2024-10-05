@@ -33,6 +33,9 @@ const UserProfile = () => {
   const [loadingComments, setLoadingComments] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages,setTotalPages] = useState(1);
+  const itemsPerPage = 6;
   
   useEffect(() => {
     const getUserData = async () => {
@@ -46,9 +49,9 @@ const UserProfile = () => {
         setEditUsername(userData.message.username);
         setEditEmail(userData.message.email);
         setProfilePicturePreview(userData.message.profile_picture);
-
-        const blogsData = await fetchUserBlogs(userId);
-        setBlogs(blogsData);
+        const blogsData = await fetchUserBlogs(userId, currentPage);
+        setBlogs(blogsData.blog);
+        setTotalPages(blogsData.totalPages);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -57,7 +60,7 @@ const UserProfile = () => {
     };
 
     getUserData();
-  }, [userId]);
+  }, [userId, currentPage]);
 
   useEffect(() => {
     const localStorageUserId = localStorage.getItem('userId');
@@ -539,6 +542,24 @@ const UserProfile = () => {
             ) : (
               <p className="text-center text-gray-500">No blogs available.</p>
             )}
+{/* Pagination Controls */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : currentPage)}
+          disabled={currentPage === 1}
+          className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          Previous
+        </button>
+        <span className="mx-2 text-lg">Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : currentPage)}
+          disabled={currentPage === totalPages}
+          className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          Next
+        </button>
+      </div>
           </div>
         </div>
       )}
