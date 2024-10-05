@@ -175,13 +175,13 @@ const Home = () => {
 
   return (
     <>
-      <div className="p-6 max-w-6xl mx-auto flex">
-        <div className="w-1/4 pr-3">
-          <div className="mb-6 flex flex-row justify-center items-center w-full p-2 border border-gray-300 rounded-full">
+      <div className="p-6 max-w-6xl mx-auto flex flex-col gap-4 justify-center md:flex-row">
+        <div className="min-w-[240px] w-full md:w-1/5 h-full pr-3">
+          <div className="mb-6 flex flex-row justify-center items-center bg-white w-full p-2 border border-grey-300 rounded-full">
             <input
               type="text"
               placeholder="Search blogs..."
-              className="bg-white focus:outline-none"
+              className="bg-white focus:outline-none flex"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -190,7 +190,7 @@ const Home = () => {
             </button>
           </div>
 
-          <div className="mb-6 rounded-lg bg-gray-100 pl-3">
+          <div className="mb-6 min-w-[240px] rounded-lg bg-gray-100 pl-3 hidden sm:block">
             <h3 className="text-xl text-blue-700 mb-2 pt-2 font-bold">Categories</h3>
             <ul className="space-y-2">
               {categories.map((cat) => (
@@ -206,7 +206,7 @@ const Home = () => {
             </ul>
           </div>
 
-          <div className="mb-6 rounded-lg bg-gray-100 pl-3">
+          <div className="mb-6 rounded-lg min-w-[240px] bg-gray-100 pl-3 hidden md:block">
             <h3 className="text-xl text-blue-700 font-semibold mb-2 pt-2">Top Posts</h3>
             <ul className="space-y-2">
               {topPosts.map((post) => (
@@ -223,7 +223,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="w-3/5">
+        <div className="w-full md:w-3/5">
           {selectedBlog ? (
             <BlogDetails selectedBlog={selectedBlog} handleBackToBlogs={handleBackToBlogs} />
           ) : (
@@ -276,7 +276,7 @@ const Home = () => {
               >
                 Previous
               </button>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 hidden sm:flex">
                 {(() => {
                   const totalButtons = 3;
                   let startPage = Math.max(1, isSearching ? currentSearchPage - Math.floor(totalButtons / 2) : currentPage - Math.floor(totalButtons / 2));

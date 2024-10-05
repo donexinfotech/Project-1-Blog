@@ -22,7 +22,7 @@ const BlogCreate = () => {
           maxWidthOrHeight: 1000,
           useWebWorker: true,
           initialQuality: 0.8,
-          maxIteration: 5
+          maxIteration: 5,
         };
 
         const compressedFile = await imageCompression(file, options);
@@ -45,18 +45,19 @@ const BlogCreate = () => {
     setSuccess(null);
 
     try {
-      await axios.post('/api/blog/create', 
-        { 
-          title, 
-          image, 
+      await axios.post(
+        '/api/blog/create',
+        {
+          title,
+          image,
           description,
-          category
+          category,
         },
-        { 
-          headers: { 
-            'Authorization': `Bearer ${Token}`,
-            'Content-Type': 'application/json'
-          }
+        {
+          headers: {
+            Authorization: `Bearer ${Token}`,
+            'Content-Type': 'application/json',
+          },
         }
       );
       setSuccess('Blog post created successfully!');
@@ -73,8 +74,8 @@ const BlogCreate = () => {
   };
 
   return (
-    <div className="max-w-5xl mt-12 mx-auto p-8 bg-white shadow-lg">
-      <h1 className="text-4xl font-bold mb-6 text-gray-800">Create a New Blog Post</h1>
+    <div className="max-w-5xl mx-auto p-4 md:p-8 bg-white shadow-lg rounded-lg">
+      <h1 className="text-2xl md:text-4xl font-bold mb-6 text-gray-800">Create a New Blog Post</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
           <label htmlFor="title" className="block text-lg font-medium text-gray-700">Title</label>
@@ -84,7 +85,7 @@ const BlogCreate = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
           />
         </div>
 
@@ -103,7 +104,7 @@ const BlogCreate = () => {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="w-1/3 h-full object-cover rounded-md border border-gray-300"
+                className="w-full md:w-1/3 h-auto object-cover rounded-md border border-gray-300"
               />
             </div>
           )}
@@ -116,7 +117,7 @@ const BlogCreate = () => {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
-            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+            className="bg-white mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
           >
             <option value="" disabled>Select a category</option>
             <option value="Cyber Threats & Vulnerabilities">Cyber Threats & Vulnerabilities</option>
@@ -139,7 +140,7 @@ const BlogCreate = () => {
             onChange={(e) => setDescription(e.target.value)}
             required
             rows="4"
-            className="bg-white text-xl min-h-[400px] block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-xl p-4"
+            className="bg-white text-xl min-h-[200px] block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-xl p-4"
           ></textarea>
         </div>
 

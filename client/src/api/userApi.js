@@ -61,8 +61,8 @@ export const fetchUserBlogs = async (userId, page = 1, limit = 6) => {
     if (!responseData.ok) {
       throw new Error('Failed to fetch user blogs');
     }
-    const response = await responseData.json(); // Await the JSON parsing
-    return response; // Access the data property
+    const response = await responseData.json(); 
+    return response;
   } catch (error) {
     throw new Error(error.message);
   }

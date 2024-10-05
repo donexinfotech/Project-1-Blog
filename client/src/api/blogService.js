@@ -48,7 +48,7 @@ export const fetchBlogsByCategory = async (category, page = 1, limit = 6) => {
     }
 
     const data = await response.json();
-    return data; // Return the entire response data directly
+    return data;
   } catch (error) {
     console.error(`Error fetching blogs for category ${category}:`, error);
     throw error;

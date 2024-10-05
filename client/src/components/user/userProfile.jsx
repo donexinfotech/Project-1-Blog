@@ -28,7 +28,6 @@ const UserProfile = () => {
   const [newProfilePicture, setNewProfilePicture] = useState('');
   const [profilePicturePreview, setProfilePicturePreview] = useState('');
 
-  // New states for comments
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -86,7 +85,7 @@ const UserProfile = () => {
       
       const enrichedComments = await Promise.all(
         fetchedComments.map(async (comment) => {
-          const userDetails = await fetchUserById(comment.commented_by); // Fetch user details by ID
+          const userDetails = await fetchUserById(comment.commented_by);  
           return {
             ...comment,
             commented_by: {
@@ -110,8 +109,8 @@ const UserProfile = () => {
     if (!newComment.trim()) return;
   
     const userId = localStorage.getItem('userId');
-    const username = localStorage.getItem('username') || 'Unknown User'; // Fallback
-    const profilePicture = localStorage.getItem('profilePicture') || 'placeholder-image-url'; // Fallback
+    const username = localStorage.getItem('username') || 'Unknown User';
+    const profilePicture = localStorage.getItem('profilePicture') || 'placeholder-image-url';
   
     if (!userId) {
       setError("User not logged in");
@@ -131,8 +130,8 @@ const UserProfile = () => {
           username: username,
           profile_picture: profilePicture,
         } : {
-          username: result.blog.comments[result.blog.comments.length - 1].commented_by_username, // Assuming your API provides this
-          profile_picture: result.blog.comments[result.blog.comments.length - 1].commented_by_profile_picture || 'placeholder-image-url', // Fallback for non-self comments
+          username: result.blog.comments[result.blog.comments.length - 1].commented_by_username, 
+          profile_picture: result.blog.comments[result.blog.comments.length - 1].commented_by_profile_picture || 'placeholder-image-url',
         },
         commented_on: new Date().toISOString(),
       }]);
@@ -261,7 +260,7 @@ const UserProfile = () => {
   return (
     <>
       {selectedBlog ? (
-        <div className="p-6 max-w-4xl mx-20">
+        <div className="p-6 max-w-4xl mx-auto">
           <button
             onClick={handleBackToProfile}
             className="absolute z-1 mt-3 ml-3 text-blue-500 bg-white rounded-full p-2 hover:text-blue-700 mb-4"
@@ -272,13 +271,13 @@ const UserProfile = () => {
             <>
               <button
                 onClick={handleEditClick}
-                className="absolute z-1 mt-3 ml-[800px] p-2 bg-white rounded-full text-blue-500 hover:text-blue-700"
+                className="absolute z-1 mt-3 right-[22rem] hidden md:block p-2 bg-white rounded-full text-blue-500 hover:text-blue-700"
               >
                 <FaEdit />
               </button>
               <button
                 onClick={handleDelete}
-                className="absolute z-1 mt-3 ml-[756px] p-2 bg-white rounded-full text-red-500 hover:text-red-700"
+                className="absolute z-1 mt-3 right-[25rem] hidden md:block  p-2 bg-white rounded-full text-red-500 hover:text-red-700"
               >
                 <FaTrashAlt />
               </button>
@@ -288,13 +287,13 @@ const UserProfile = () => {
             <img
               src={`data:image/jpeg;base64,${selectedBlog.image}`}
               alt={selectedBlog.title}
-              className="w-full h-full object-cover"
+              className="w-full h-60 sm:h-80 object-cover"
             />
-            <div className="relative flex justify-center ml-10 w-[750px] -mt-4">
-              <div className="w-[700px] p-10 bg-white bg-opacity-70 text-left rounded-lg shadow-lg">
+            <div className="relative flex justify-center w-full -mt-4 px-4">
+              <div className="w-full max-w-2xl p-6 bg-white bg-opacity-70 text-left rounded-lg shadow-lg">
                 {isEditing ? (
                   <div>
-                    <h1 className="text-5xl font-bold mb-4 font-serif">Edit Blog</h1>
+                    <h1 className="text-4xl font-bold mb-4 font-serif">Edit Blog</h1>
                     <form>
                       <div className="mb-4">
                         <label htmlFor="editTitle" className="block text-sm font-medium text-gray-700">Title</label>
@@ -312,7 +311,7 @@ const UserProfile = () => {
                           id="editDescription"
                           value={editDescription}
                           onChange={(e) => setEditDescription(e.target.value)}
-                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                          className="mt-1 block w-full h-[700px] border-gray-300 rounded-md shadow-sm"
                         />
                       </div>
                       <div className="mb-4">
@@ -354,8 +353,8 @@ const UserProfile = () => {
                     </form>
                   </div>
                 ) : (
-                  <div >
-                    <h1 className="text-5xl font-bold mb-4 font-serif">{selectedBlog.title}</h1>
+                  <div>
+                    <h1 className="text-4xl font-bold mb-4 font-serif">{selectedBlog.title}</h1>
                     <p className="text-lg text-gray-700 mb-6">{selectedBlog.description}</p>
                     <p className="text-sm text-gray-500 mb-6">
                       <em>Created on: {new Date(selectedBlog.created_at).toLocaleDateString()}</em>
@@ -368,7 +367,7 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
-
+  
           {/* Comments Section */}
           <div className="p-4 mt-8 bg-white bg-opacity-90 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-4">Comments</h2>
@@ -380,7 +379,7 @@ const UserProfile = () => {
                   <div key={comment._id} className="border-b py-2">
                     <div className="flex items-center">
                       <img
-                        src={`data:image/jpeg;base64,${comment.commented_by.profile_picture || 'placeholder-image-url'}`} // Replace with actual profile picture URL if available
+                        src={`data:image/jpeg;base64,${comment.commented_by.profile_picture || 'placeholder-image-url'}`}
                         alt={comment.commented_by.username}
                         className="w-8 h-8 rounded-full mr-2"
                       />
@@ -413,9 +412,9 @@ const UserProfile = () => {
         </div>
       ) : (
         <div>
-          <div className="p-6 max-w-4xl mx-20">
+          <div className="p-6 max-w-4xl mx-auto">
             {user && (
-              <div className="flex items-center space-x-6 gap-10">
+              <div className="flex flex-col sm:flex-row items-center space-x-0 sm:space-x-6 gap-10">
                 <div className="flex-shrink-0">
                   <img
                     src={`data:image/jpeg;base64,${profilePicturePreview}`}
@@ -423,7 +422,7 @@ const UserProfile = () => {
                     className="w-64 h-64 object-cover border-2 border-gray-300"
                   />
                 </div>
-                <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-2 w-full'>
                   {isEditingProfile ? (
                     <div>
                       <h3 className="text-2xl font-bold font-mono text-gray-900">Edit Profile</h3>
@@ -517,10 +516,10 @@ const UserProfile = () => {
             )}
           </div>
           <hr />
-          <div className="p-6 mx-40">
+          <div className="p-6 mx-4 sm:mx-20">
             <h2 className="text-2xl font-bold mb-4">User's Blogs</h2>
             {blogs.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {blogs.map((blog) => (
                   <div
                     key={blog._id}
@@ -542,29 +541,28 @@ const UserProfile = () => {
             ) : (
               <p className="text-center text-gray-500">No blogs available.</p>
             )}
-{/* Pagination Controls */}
-      <div className="flex justify-center mt-4">
-        <button
-          onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : currentPage)}
-          disabled={currentPage === 1}
-          className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          Previous
-        </button>
-        <span className="mx-2 text-lg">Page {currentPage} of {totalPages}</span>
-        <button
-          onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : currentPage)}
-          disabled={currentPage === totalPages}
-          className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          Next
-        </button>
-      </div>
+            {/* Pagination Controls */}
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : currentPage)}
+                disabled={currentPage === 1}
+                className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Previous
+              </button>
+              <span className="mx-2 text-lg">Page {currentPage} of {totalPages}</span>
+              <button
+                onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : currentPage)}
+                disabled={currentPage === totalPages}
+                className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       )}
     </>
   );
-};
-
+}
 export default UserProfile;

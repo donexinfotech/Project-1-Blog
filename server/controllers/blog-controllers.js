@@ -106,19 +106,18 @@ const getBlogById = async (req, res)=>{
 const getBlogByUserId = async (req, res) => {
     try {
         const id = req.params.id;
-        const page = parseInt(req.query.page) || 1; // Default to page 1
-        const limit = parseInt(req.query.limit) || 6; // Default to 10 items per page
-        const skip = (page - 1) * limit; // Calculate how many items to skip
-
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6; 
+        const skip = (page - 1) * limit; 
         const [blog, total] = await Promise.all([
-            Blog.find({ created_by: id }).skip(skip).limit(limit), // Fetch blogs with pagination
-            Blog.countDocuments({ created_by: id }) // Get total count of blogs for this user
+            Blog.find({ created_by: id }).skip(skip).limit(limit), 
+            Blog.countDocuments({ created_by: id })
         ]);
 
         res.status(200).json({
             blog,
             total,
-            totalPages: Math.ceil(total / limit), // Calculate total pages
+            totalPages: Math.ceil(total / limit),
             currentPage: page
         });
     } catch (error) {
@@ -131,15 +130,14 @@ const getBlogByUserId = async (req, res) => {
 const getBlogByCategory = async (req, res) => {
     try {
         const category = req.params.category;
-        const page = parseInt(req.query.page) || 1; // Get page number from query, default to 1
-        const limit = parseInt(req.query.limit) || 10; // Get limit from query, default to 10
-        const skip = (page - 1) * limit; // Calculate the number of documents to skip
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10; 
+        const skip = (page - 1) * limit; 
 
         const blogs = await Blog.find({ category: category })
             .skip(skip)
             .limit(limit);
         
-        // Get total count of blogs in the category for pagination
         const totalBlogs = await Blog.countDocuments({ category: category });
 
         res.status(200).json({
@@ -158,9 +156,9 @@ const getBlogByCategory = async (req, res) => {
 const searchBlogs = async (req, res) => {
     try {
         const key = req.params.key;
-        const page = parseInt(req.query.page) || 1; // Current page
-        const limit = parseInt(req.query.limit) || 6; // Number of items per page
-        const skip = (page - 1) * limit; // Number of items to skip
+        const page = parseInt(req.query.page) || 1; 
+        const limit = parseInt(req.query.limit) || 6;
+        const skip = (page - 1) * limit;
 
         const result = await Blog.find({
             $or: [
