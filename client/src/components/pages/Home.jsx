@@ -26,7 +26,7 @@ const Home = () => {
     try {
       const blogsData = await fetchBlogs();
       const updatedBlogs = await Promise.all(
-        blogsData.map(async (blog) => {
+        blogsData.blogs.map(async (blog) => {
           try {
             const response = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
             const userData = await response.json();
