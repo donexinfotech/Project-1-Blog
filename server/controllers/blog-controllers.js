@@ -20,14 +20,31 @@ const createBlog = async (req, res)=>{
         res.status(500).json({ message: 'Server Error', error });
     }
 }
+
 const getAllBlogs = async (req, res) => {
     try {
-      const blogs = await Blog.find();
-      res.status(200).json(blogs);
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 6;
+  
+      const startIndex = (page - 1) * limit;
+  
+      const totalBlogs = await Blog.countDocuments();
+  
+      const blogs = await Blog.find()
+        .skip(startIndex)
+        .limit(limit);
+  
+      res.status(200).json({
+        blogs,
+        currentPage: page,
+        totalPages: Math.ceil(totalBlogs / limit),
+        totalBlogs
+      });
     } catch (error) {
       res.status(500).json({ message: 'Server Error', error });
     }
   };
+  
 
 const deleteBlog = async (req,res) => {
     try {
