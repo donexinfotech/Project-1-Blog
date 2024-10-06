@@ -4,6 +4,8 @@ import { fetchUserById, fetchUserBlogs } from '../../api/userApi';
 import { updateBlogById, deleteBlogById, fetchComments, postComment } from '../../api/blogService';
 import { FaArrowLeft, FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { useAuth } from '../auth/AuthContext';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import Loader from '../utils/Loader';
 
 const UserProfile = () => {
@@ -34,7 +36,6 @@ const UserProfile = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
-  const itemsPerPage = 6;
   
   useEffect(() => {
     const getUserData = async () => {
@@ -254,6 +255,17 @@ const UserProfile = () => {
     }
   };
 
+  const modules = {
+    toolbar: [
+      [{ 'font': [] }, { 'size': ['normal', 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      ['code-block'],
+      ['link', 'image'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['clean']
+    ],
+  };
+
   if (loading) return <Loader text='Loading User Profile' />;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
@@ -307,12 +319,14 @@ const UserProfile = () => {
                       </div>
                       <div className="mb-4">
                         <label htmlFor="editDescription" className="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea
-                          id="editDescription"
-                          value={editDescription}
-                          onChange={(e) => setEditDescription(e.target.value)}
-                          className="mt-1 block w-full h-[700px] border-gray-300 rounded-md shadow-sm"
-                        />
+                        <ReactQuill
+                        id="description"
+                        value={editDescription}
+                        onChange={setEditDescription}
+                        required
+                        modules={modules}
+                        className="border border-gray-300 rounded-md"
+                      />
                       </div>
                       <div className="mb-4">
                         <label htmlFor="editImage" className="block text-sm font-medium text-gray-700">Image</label>
@@ -355,8 +369,11 @@ const UserProfile = () => {
                 ) : (
                   <div>
                     <h1 className="text-4xl font-bold mb-4 font-serif">{selectedBlog.title}</h1>
-                    <p className="text-lg text-gray-700 mb-6">{selectedBlog.description}</p>
-                    <p className="text-sm text-gray-500 mb-6">
+                    <ReactQuill 
+                      value={selectedBlog.description}
+                      readOnly={true}
+                      theme="bubble"
+                    />                    <p className="text-sm text-gray-500 mb-6">
                       <em>Created on: {new Date(selectedBlog.created_at).toLocaleDateString()}</em>
                     </p>
                     <p className="text-sm text-gray-500 mb-6">
@@ -533,8 +550,12 @@ const UserProfile = () => {
                     />
                     <div className="p-4">
                       <h3 className="text-xl font-semibold text-gray-900">{blog.title}</h3>
-                      <p className="text-gray-700 mt-2">{blog.description.slice(0, 100)}...</p>
-                    </div>
+                      <ReactQuill 
+                        value={blog.description.slice(0, 100)+'...'}
+                        readOnly={true}
+                        theme="bubble"
+                      />                    
+                      </div>
                   </div>
                 ))}
               </div>

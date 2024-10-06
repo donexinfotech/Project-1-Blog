@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import imageCompression from 'browser-image-compression';
+import ReactQuill from 'react-quill'; 
+import 'react-quill/dist/quill.snow.css';
 
 const BlogCreate = () => {
   const [title, setTitle] = useState('');
@@ -64,13 +66,24 @@ const BlogCreate = () => {
       setTitle('');
       setImage('');
       setDescription('');
-      setCategory(''); // Reset category
+      setCategory('');
       setImagePreview('');
     } catch (err) {
       setError('Failed to create blog post.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const modules = {
+    toolbar: [
+      [{ 'font': [] }, { 'size': ['normal', 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      ['code-block'],
+      ['link', 'image' ,'video'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['clean']
+    ],
   };
 
   return (
@@ -134,14 +147,14 @@ const BlogCreate = () => {
 
         <div className="mb-6">
           <label htmlFor="description" className="block text-lg font-medium text-gray-700 mb-2">Description</label>
-          <textarea
+          <ReactQuill
             id="description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={setDescription}
             required
-            rows="4"
-            className="bg-white text-xl min-h-[200px] block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-xl p-4"
-          ></textarea>
+            modules={modules}
+            className="border border-gray-300 rounded-md"
+          />
         </div>
 
         <div className="flex items-center justify-between">

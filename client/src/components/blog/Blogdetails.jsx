@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import Loader from '../utils/Loader';
 import { fetchComments, postComment } from '../../api/blogService';
 import { useAuth } from '../auth/AuthContext';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
   const { isLoggedIn } = useAuth();
@@ -118,7 +120,13 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
           </div>
         </Link>
         <h1 className="text-3xl md:text-5xl font-bold mb-4 font-serif">{selectedBlog.title}</h1>
-        <p className="text-lg text-gray-700 mb-6">{selectedBlog.description}</p>
+        
+        <ReactQuill 
+          value={selectedBlog.description}
+          readOnly={true} 
+          theme="bubble"
+        />
+        
         <p className="text-sm text-gray-500 mb-6">
           <em>Created on: {new Date(selectedBlog.created_at).toLocaleDateString()}</em>
         </p>

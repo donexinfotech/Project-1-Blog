@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { fetchBlogs, fetchBlogsByCategory, getBlogById, searchBlogsByKey } from '../../api/blogService';
 import { FaSearch } from 'react-icons/fa';
 import BlogDetails from '../blog/blogDetails';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import Loader from '../utils/Loader';
 
 const categories = [
@@ -33,7 +35,6 @@ const Home = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalSearchPages, setTotalSearchPages] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
-  const prevSearchQuery=null;
 
   const fetchBlogsData = async (pageNumber = currentPage) => {
     setLoading(true);
@@ -257,7 +258,11 @@ const Home = () => {
                     </div>
                     <div className="p-4">
                       <h2 className="text-xl font-semibold text-red-600">{blog.title}</h2>
-                      <p className="text-gray-700 mb-4">{blog.description.slice(0, 100)}...</p>
+                      <ReactQuill 
+                        value={blog.description.slice(0, 100)+'...'}
+                        readOnly={true} 
+                        theme="bubble"
+                      /> 
                     </div>
                   </div>
                 ))
