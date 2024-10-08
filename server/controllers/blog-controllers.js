@@ -1,4 +1,5 @@
 const Blog = require("../models/blog-model");
+const nodemailer = require("nodemailer");
 
 const createBlog = async (req, res)=>{
     try {
@@ -202,6 +203,44 @@ const searchBlogs = async (req, res) => {
     }
 };
 
+const reportBlog = async (req, res)=>{
+    try {
+
+        const id = req.params.blogID
+
+        const blog = await Blog.findOne({_id : id})
+        const adminEmail = "syb26633@gmail.com"
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "donexinfotech@gmail.com",
+              pass: "dtzb viow nozw xqyy",
+            },
+          });
+      
+          const mailOptions = {
+            from: "donexinfotech@gmail.com",
+            to: adminEmail,
+            subject: "Someone Reported a blog",
+            text: `A blog with was reported`,
+            html:`
+            <p>A blog with was reported</p>
+            <h1>blogID: ${blog._id}</h1>
+            <h2>${blog.title}</h2>
+             `,
+          };
+      
+          await transporter.sendMail(mailOptions);
+
+        res.status(200).json({
+            message : "Blog reported Succesfully"
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
-module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId, getBlogByCategory, searchBlogs};
+
+module.exports = {createBlog, getAllBlogs, updateBlog, deleteBlog, getBlogById, getBlogByUserId, getBlogByCategory, searchBlogs, reportBlog};
