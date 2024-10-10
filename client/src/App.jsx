@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <>
-    <Pages/>
     <ToastContainer 
       position="top-right"
       autoClose={3002}
@@ -19,7 +18,8 @@ function App() {
       pauseOnHover
       theme="colored"
       bodyClassName="toastBody"
-    />
+      />
+    <Pages/>
     </>
   );
 }
