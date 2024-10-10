@@ -126,7 +126,7 @@ const sendResetMail = async (req, res) => {
   );
 
   try {
-    const resetLink = `http://localhost:3000/password-reset/${email}/${token}`;
+    const resetLink = `https://blogs-donex-backend.vercel.app/password-reset/${email}/${token}`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
