@@ -8,7 +8,7 @@ const commentRouter = require("./router/comment-router")
 const quizRouter = require("./router/quiz-router")
 
 app.use(cors({
-  origin: ['https://cybiaware-donex.vercel.app','https://blogs-donex-backend.vercel.app'],
+  origin: ['https://cybiaware-donex.vercel.app','https://blogs-donex-backend.vercel.app','http://localhost:3000'],
   methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
   allowedHeaders: 'Content-Type,Authorization'
 }))
