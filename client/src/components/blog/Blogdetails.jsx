@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
+import { IoMdWarning } from "react-icons/io";
 import { fetchUserById } from '../../api/userApi';
 import { Link } from 'react-router-dom';
 import Loader from '../utils/Loader';
@@ -7,6 +8,7 @@ import { fetchComments, postComment } from '../../api/blogService';
 import { useAuth } from '../auth/AuthContext';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
   const { isLoggedIn } = useAuth();
@@ -44,6 +46,35 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
 
     fetchBlogData();
   }, [selectedBlog]);
+
+
+  const handleReport = async (blogID) => {
+    const confirmReport = window.confirm("Do you want to report this blog?");
+    
+    if (confirmReport) {
+      try {
+        const report = await fetch(`http://localhost:5000/api/blog/report/${blogID}`);
+        if (!report.ok) {
+          throw new Error('Failed to report the blog');
+        }
+        const data = await report.json();
+        
+        // Assuming data contains a message like { message: "Report successful" }
+        console.log(data)
+        if (data.message) {
+          toast.warn(data.message);  // Show success toast
+        } else {
+          toast.warn('Blog reported successfully'); // Fallback message
+        }
+      } catch (error) {
+        toast.error('Failed to report the blog. Please try again.'); // Show error toast
+        console.error('Error:', error);
+      }
+    } else {
+      console.log("User canceled the report.");
+    }
+  };
+  
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -92,9 +123,16 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
       <div className="relative w-full max-w-3xl">
         <button
           onClick={handleBackToBlogs}
-          className="absolute top-4 left-4 bg-white p-2 rounded-full shadow-lg hover:bg-gray-200"
+          className="absolute top-4 left-4 bg-white p-2 rounded-full shadow-lg"
         >
           <FaArrowLeft />
+        </button>
+        <button
+          onClick={() => handleReport(selectedBlog._id)}
+          className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-lg"
+        >
+          <IoMdWarning 
+          color='red'/>
         </button>
         <img
           src={`data:image/jpeg;base64,${selectedBlog.image}`}
@@ -158,6 +196,7 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
 
         {/* Comment Input Form */}
         {isLoggedIn ? (
+          <>
           <form onSubmit={handleCommentSubmit} className="mt-6">
             <textarea
               value={newComment}
@@ -168,6 +207,7 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
             />
             <button type="submit" className="bg-blue-500 text-white p-2 rounded">Post Comment</button>
           </form>
+          </>
         ) : (
           <p className="mt-8 font-extrabold text-red-500 text-center">Kindly Log In to add a comment.</p>
         )}
