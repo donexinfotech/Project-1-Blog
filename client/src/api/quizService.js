@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api/quiz';
+const API_URL = 'https://blogs-donex-backend.vercel.app/api/quiz';
 const token = localStorage.getItem('authToken');
 
 const quizService = {

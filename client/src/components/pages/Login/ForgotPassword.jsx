@@ -8,7 +8,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/auth/send-reset-mail", {
+    const response = await fetch("https://blogs-donex-backend.vercel.app/api/auth/send-reset-mail", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

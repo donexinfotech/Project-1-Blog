@@ -53,7 +53,7 @@ const BlogDetails = ({ selectedBlog, handleBackToBlogs }) => {
     
     if (confirmReport) {
       try {
-        const report = await fetch(`http://localhost:5000/api/blog/report/${blogID}`);
+        const report = await fetch(`https://blogs-donex-backend.vercel.app/api/blog/report/${blogID}`);
         if (!report.ok) {
           throw new Error('Failed to report the blog');
         }

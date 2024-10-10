@@ -8,7 +8,7 @@ const ADMIN = 'admin';
 
 export const loginUser = async (email, password) => {
   try {
-    const response = await axios.post('/api/auth/login', { email, password });
+    const response = await axios.post('https://blogs-donex-backend.vercel.app/api/auth/login', { email, password });
     const { token, userId, username, profile_picture,admin } = response.data;
 
     localStorage.setItem(TOKEN_KEY, token);
@@ -25,7 +25,7 @@ export const loginUser = async (email, password) => {
 
 export const registerUser = async (userData) => {
   try {
-    const response = await axios.post('/api/auth/register', userData);
+    const response = await axios.post('https://blogs-donex-backend.vercel.app/api/auth/register', userData);
     const { token, userId, username, profile_picture } = response.data;
     
     localStorage.setItem(TOKEN_KEY, token);
@@ -41,7 +41,7 @@ export const registerUser = async (userData) => {
 
 export const fetchUserById = async (id) => {
   try {
-    const response = await fetch(`/api/auth/get-user-by-id/${id}`);
+    const response = await fetch(`https://blogs-donex-backend.vercel.app/api/auth/get-user-by-id/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch user data');
     }
@@ -57,7 +57,7 @@ export const getToken = () => {
 
 export const fetchUserBlogs = async (userId, page = 1, limit = 6) => {
   try {
-    const responseData = await fetch(`/api/blog/get-blog-by-userid/${userId}?page=${page}&limit=${limit}`);
+    const responseData = await fetch(`https://blogs-donex-backend.vercel.app/api/blog/get-blog-by-userid/${userId}?page=${page}&limit=${limit}`);
     if (!responseData.ok) {
       throw new Error('Failed to fetch user blogs');
     }
@@ -81,7 +81,7 @@ export const logoutUser = () => {
 export const updateUserById = async (id, updatedData) => {
   try {
     const token = getToken();
-    const response = await axios.patch(`/api/auth/update/${id}`, updatedData, {
+    const response = await axios.patch(`https://blogs-donex-backend.vercel.app/api/auth/update/${id}`, updatedData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
