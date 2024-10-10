@@ -10,7 +10,6 @@ const quizRouter = require("./router/quiz-router")
 app.use(cors({
   origin: '*',
   methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
-  credentials:true,
   allowedHeaders: 'Content-Type,Authorization'
 }))
 
