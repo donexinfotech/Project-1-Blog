@@ -12,6 +12,7 @@ import PasswordReset from './Login/PasswordReset';
 import Quiz from '../quiz/Quiz'
 import AnswerQuiz from '../quiz/answerQuiz';
 import AddQuiz from '../quiz/addQuiz';
+import About from './About';
 
 function Pages() {
   return (
@@ -26,6 +27,7 @@ function Pages() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/about-us" element={<About />} />
           <Route path="/register" element={<Register />} />
           <Route path="/create-blog" element={<Blogcreate />} />
           <Route path="/user/:id" element={<UserProfile />} />
