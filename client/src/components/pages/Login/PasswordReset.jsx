@@ -29,7 +29,7 @@ const PasswordReset = () => {
         }
     
         try {
-          const response = await fetch(`/api/auth/password-reset/${email}`, {
+          const response = await fetch(`https://blogs-donex-backend.vercel.app/api/auth/password-reset/${email}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

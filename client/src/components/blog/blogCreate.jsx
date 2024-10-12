@@ -48,7 +48,7 @@ const BlogCreate = () => {
 
     try {
       await axios.post(
-        '/api/blog/create',
+        `https://blogs-donex-backend.vercel.app/api/blog/create`,
         {
           title,
           image,

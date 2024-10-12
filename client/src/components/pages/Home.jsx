@@ -41,7 +41,7 @@ const Home = () => {
     try {
       const blogsData = await fetchBlogs(pageNumber, limit);
       const updatedBlogs = await Promise.all(blogsData.blogs.map(async (blog) => {
-        const userResponse = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
+        const userResponse = await fetch(`https://blogs-donex-backend.vercel.app/api/auth/get-user-by-id/${blog.created_by}`);
         const userData = await userResponse.json();
         return {
           ...blog,
@@ -67,7 +67,7 @@ const Home = () => {
     try {
       const blogsData = await fetchBlogsByCategory(selectedCategory, pageNumber, limit);
       const updatedBlogs = await Promise.all(blogsData.blogs.map(async (blog) => {
-        const userResponse = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
+        const userResponse = await fetch(`https://blogs-donex-backend.vercel.app/api/auth/get-user-by-id/${blog.created_by}`);
         const userData = await userResponse.json();
         return {
           ...blog,
@@ -102,7 +102,7 @@ const Home = () => {
         setTotalSearchPages(0);
       } else {
         const updatedSearchResults = await Promise.all(searchResults.blogs.map(async (blog) => {
-          const userResponse = await fetch(`/api/auth/get-user-by-id/${blog.created_by}`);
+          const userResponse = await fetch(`https://blogs-donex-backend.vercel.app/api/auth/get-user-by-id/${blog.created_by}`);
           const userData = await userResponse.json();
           return {
             ...blog,

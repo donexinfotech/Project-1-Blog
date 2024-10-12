@@ -9,7 +9,7 @@ const BlogEdit = ({ blog, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.patch(`/api/update-blog/${blog._id}`, {
+      await axios.patch(`https://blogs-donex-backend.vercel.app/api/update-blog/${blog._id}`, {
         title,
         description,
         image,
