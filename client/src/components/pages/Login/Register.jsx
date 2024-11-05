@@ -71,17 +71,17 @@ function Register() {
 
     setLoading(true);
     try {
-      const response = await fetch(`https://blogs-donex-backend.vercel.app/api/auth/register`, {
+      const response = await fetch(`http://localhost:5000/api/auth/confirm-register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData }),
       });
-
+      console.log(formData)
+      console.log(response)
       if (response.ok) {
-        setSuccessMessage('Registration successful!');
-        navigate('/login');
+        setSuccessMessage(`Verification Mail Sent to ${formData.email}`);
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Registration failed. User might already exist.');

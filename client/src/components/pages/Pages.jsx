@@ -13,6 +13,7 @@ import Quiz from '../quiz/Quiz'
 import AnswerQuiz from '../quiz/answerQuiz';
 import AddQuiz from '../quiz/addQuiz';
 import About from './About';
+import ConfirmRegister from './Login/ConfirmRegister';
 
 function Pages() {
   return (
@@ -36,6 +37,7 @@ function Pages() {
           <Route path="/quiz" element={<Quiz/>}/>
           <Route path="/quiz/:id" element={<AnswerQuiz/>}/>
           <Route path="/quiz/add" element={<AddQuiz/>}/>
+          <Route path="/confirm" element={<ConfirmRegister/>}/>
         </Routes>
     </Router>
     </AuthProvider>

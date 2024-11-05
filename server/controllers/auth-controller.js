@@ -15,29 +15,43 @@ const Register = async (req, res) => {
       password,
     } = req.body;
 
-    const userExist = await User.findOne({ email: email });
+    const confirmLink = `https://localhost:3000/confirm-register/${username}/${profile_picture}/${first_name}/${last_name}/${email}/${phone}/${password}`;
 
-    if (userExist) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
-
-    const userCreated = await User.create({
-      first_name,
-      last_name,
-      profile_picture,
-      username,
-      email,
-      phone,
-      password,
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "donexinfotech@gmail.com",
+        pass: "dtzb viow nozw xqyy",
+      },
     });
 
-    res.status(200).json({
-      message: `${username} Registered Sucessfully`,
-      token: await userCreated.generateToken(),
-      userId: userCreated._id.toString(),
-    });
+    const mailOptions = {
+      from: "donexinfotech@gmail.com",
+      to: email,
+      subject: "Confirm Registration",
+      text: `Click the link to confirm: ${confirmLink}`,
+      html: `
+        <div style="text-align: center;">
+        <p>Click the button below to confirm:</p>
+        <a href="${confirmLink}" style="text-decoration: none;">
+            <button style="
+            background-color: #007BFF; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            cursor: pointer;">
+            Confirm
+            </button>
+        </a>
+        </div>
+  `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).send({ message: "Reset email sent successfully" });
   } catch (error) {
     console.log(error);
   }
@@ -126,7 +140,7 @@ const sendResetMail = async (req, res) => {
   );
 
   try {
-    const resetLink = `https://cybiaware-donex.vercel.app/password-reset/${email}/${token}`;
+    const resetLink = `http://localhost:3000/confirm`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -199,6 +213,46 @@ const passwordReset = async (req, res) => {
   }
 };
 
+const confirmRegister = async (req, res)=>{
+  try {
+    const {
+      first_name,
+      last_name,
+      profile_picture,
+      username,
+      email,
+      phone,
+      password,
+    } = req.body;
+    const userExist = await User.findOne({ email: email });
+
+    if (userExist) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
+
+    const userCreated = await User.create({
+      first_name,
+      last_name,
+      profile_picture,
+      username,
+      email,
+      phone,
+      password,
+    });
+
+    res.status(200).json({
+      message: `${username} Registered Sucessfully`,
+      token: await userCreated.generateToken(),
+      userId: userCreated._id.toString(),
+    });
+  } catch (error) {
+    res.status(400).send(error)
+    console.log(error)
+  }
+}
+
 module.exports = {
   Register,
   Login,
@@ -206,4 +260,5 @@ module.exports = {
   updateUser,
   passwordReset,
   sendResetMail,
+  confirmRegister
 };
