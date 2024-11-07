@@ -71,6 +71,7 @@ function Register() {
 
     setLoading(true);
     try {
+      const link = "http://blogs-donex-backend.vercel.app/api/auth/register/"
       const response = await fetch(`http://blogs-donex-backend.vercel.app/api/auth/register/`, {
         method: "POST",
         headers: {
