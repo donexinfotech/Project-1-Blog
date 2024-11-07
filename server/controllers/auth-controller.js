@@ -15,17 +15,7 @@ const Register = async (req, res) => {
       password,
     } = req.body;
 
-    const token = jwt.sign(
-      {
-        email: email,
-      },
-      "DONEXBLOG",
-      {
-        expiresIn: "1d",
-      }
-    );
-
-    const confirmLink = `https://cybiaware-donex.vercel.app/confirm/${token}`;
+    const confirmLink = `https://cybiaware-donex.vercel.app/confirm/${email}`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -249,12 +239,8 @@ const passwordReset = async (req, res) => {
 
 const confirmRegister = async (req, res)=>{
   try {
-    const token = req.params
-    console.log(token)
-
-    const isVerified =  jwt.verify(token, "DONEXBLOG")
-    console.log(isVerified);
-    const userExist = await User.findOne({ email: isVerified.email });
+    const email = req.params
+    const userExist = await User.findOne({ email: email });
 
     userExist.confirmed = true
     await userExist.save()
