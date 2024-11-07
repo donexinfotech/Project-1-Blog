@@ -239,7 +239,7 @@ const passwordReset = async (req, res) => {
 
 const confirmRegister = async (req, res)=>{
   try {
-    const email = req.params
+    const { email } = req.params;
     const userExist = await User.findOne({ email: email });
 
     userExist.confirmed = true

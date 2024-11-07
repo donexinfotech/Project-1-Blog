@@ -37,7 +37,7 @@ function Pages() {
           <Route path="/quiz" element={<Quiz/>}/>
           <Route path="/quiz/:id" element={<AnswerQuiz/>}/>
           <Route path="/quiz/add" element={<AddQuiz/>}/>
-          <Route path="/confirm/:token" element={<ConfirmRegister/>}/>
+          <Route path="/confirm/:email" element={<ConfirmRegister/>}/>
         </Routes>
     </Router>
     </AuthProvider>
