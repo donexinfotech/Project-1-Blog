@@ -15,30 +15,43 @@ const Register = async (req, res) => {
       password,
     } = req.body;
 
-    const userExist = await User.findOne({ email: email });
+    const confirmLink = `https://cybiaware-donex.vercel.app/confirm`;
 
-    if (!userExist) {
-      const userCreated = await User.create({
-        first_name,
-        last_name,
-        profile_picture,
-        username,
-        email,
-        phone,
-        password,
-      });
-  
-      res.status(200).json({
-        message: `${username} Registered Sucessfully`,
-        token: await userCreated.generateToken(),
-        userId: userCreated._id.toString(),
-      });
-      
-    }
-    return res.status(400).json({
-      message: "User already exists",
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "donexinfotech@gmail.com",
+        pass: "dtzb viow nozw xqyy",
+      },
     });
-    
+
+    const mailOptions = {
+      from: "donexinfotech@gmail.com",
+      to: email,
+      subject: "Confirm Registration",
+      text: `Click the link to confirm: ${confirmLink}`,
+      html: `
+        <div style="text-align: center;">
+        <p>Click the button below to confirm:</p>
+        <a href="${confirmLink}" style="text-decoration: none;">
+            <button style="
+            background-color: #007BFF; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            cursor: pointer;">
+            Confirm
+            </button>
+        </a>
+        </div>
+  `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).send({ message: "Reset email sent successfully" });
   } catch (error) {
     console.log(error);
   }
