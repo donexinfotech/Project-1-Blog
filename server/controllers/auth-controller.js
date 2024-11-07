@@ -140,7 +140,7 @@ const sendResetMail = async (req, res) => {
   );
 
   try {
-    const resetLink = `http://cybiaware-donex.vercel.app/confirm`;
+    const resetLink = `http://cybiaware-donex.vercel.app/password-reset/${email}/${token}`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
