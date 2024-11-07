@@ -51,6 +51,30 @@ const Register = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
+    const userExist = await User.findOne({ email: email });
+
+    if (userExist) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
+
+    const userCreated = await User.create({
+      first_name,
+      last_name,
+      profile_picture,
+      username,
+      email,
+      phone,
+      password,
+    });
+
+    // res.status(200).json({
+    //   message: `${username} Registered Sucessfully`,
+    //   token: await userCreated.generateToken(),
+    //   userId: userCreated._id.toString(),
+    // });
+
     res.status(200).send({ message: "Reset email sent successfully" });
   } catch (error) {
     console.log(error);
