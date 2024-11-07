@@ -70,8 +70,8 @@ function Register() {
     }
 
     setLoading(true);
+    const link = "http://blogs-donex-backend.vercel.app/api/auth/register/"
     try {
-      const link = "http://blogs-donex-backend.vercel.app/api/auth/register/"
       const response = await fetch(`http://blogs-donex-backend.vercel.app/api/auth/register/`, {
         method: "POST",
         headers: {
@@ -88,7 +88,7 @@ function Register() {
         setError(errorData.message || 'Registration failed. User might already exist.');
       }
     } catch (error) {
-      setError('An error occurred during registration.');
+      setError(`An error occurred during registration. ${link}`);
     } finally {
       setLoading(false);
     }
