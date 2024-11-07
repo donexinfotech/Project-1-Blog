@@ -17,13 +17,6 @@ const Register = async (req, res) => {
 
     const token = jwt.sign(
       {
-        first_name :first_name,
-        last_name :last_name,
-        profile_picture :profile_picture,
-        username :username,
-        email :email,
-        phone :phone,
-        password :password,
         email: email,
       },
       "DONEXBLOG",
@@ -68,23 +61,23 @@ const Register = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    // const userExist = await User.findOne({ email: email });
+    const userExist = await User.findOne({ email: email });
 
-    // if (userExist) {
-    //   return res.status(400).json({
-    //     message: "User already exists",
-    //   });
-    // }
+    if (userExist) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
 
-    // const userCreated = await User.create({
-    //   first_name,
-    //   last_name,
-    //   profile_picture,
-    //   username,
-    //   email,
-    //   phone,
-    //   password,
-    // });
+    const userCreated = await User.create({
+      first_name,
+      last_name,
+      profile_picture,
+      username,
+      email,
+      phone,
+      password,
+    });
 
     // res.status(200).json({
     //   message: `${username} Registered Sucessfully`,
@@ -263,21 +256,8 @@ const confirmRegister = async (req, res)=>{
     console.log(isVerified);
     const userExist = await User.findOne({ email: isVerified.email });
 
-    if (userExist) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
-
-    const userCreated = await User.create({
-      first_name : isVerified.first_name,
-      last_name : isVerified.last_name,
-      profile_picture : isVerified.profile_picture,
-      username : isVerified.username,
-      email : isVerified.email,
-      phone : isVerified.phone,
-      password : isVerified.password,
-    });
+    userExist.confirmed = true
+    await userExist.save()
 
     res.status(200).json({
       message: `${username} Registered Sucessfully`,
