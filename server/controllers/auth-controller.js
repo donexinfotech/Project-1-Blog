@@ -140,7 +140,7 @@ const sendResetMail = async (req, res) => {
   );
 
   try {
-    const resetLink = `http://localhost:3000/confirm`;
+    const resetLink = `http://cybiaware-donex.vercel.app/confirm`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
