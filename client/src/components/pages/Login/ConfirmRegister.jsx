@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ConfirmRegister = () => {
@@ -7,6 +7,16 @@ const ConfirmRegister = () => {
     const handleLoginRedirect = () => {
         navigate('/login');
     };
+
+    const confirmRegistration = async () => {
+        const response = await fetch("https://blogs-donex-backend.vercel.app/api/auth/confirm-register");
+        const data = await response.json();
+        console.log(data);
+    }
+
+    useEffect(()=>{
+        confirmRegistration()
+    },[])
 
     return (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
