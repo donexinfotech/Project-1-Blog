@@ -95,7 +95,7 @@ const Login = async (req, res) => {
 
     const user = await bycrypt.compare(password, userExist.password);
 
-    if (user) {
+    if (user && userExist.confirmed) {
       res.status(200).json({
         Message: "Loggedin Successfully",
         token: await userExist.generateToken(),
