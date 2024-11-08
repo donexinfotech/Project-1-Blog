@@ -95,19 +95,26 @@ const Login = async (req, res) => {
 
     const user = await bycrypt.compare(password, userExist.password);
 
-    if (user && userExist.confirmed) {
-      res.status(200).json({
-        Message: "Loggedin Successfully",
-        token: await userExist.generateToken(),
-        userId: userExist._id.toString(),
-        username: userExist.username,
-        profile_picture: userExist.profile_picture,
-        admin: userExist.isAdmin,
-      });
-    } else {
-      res.status(401).json({
-        message: "Invalid password",
-      });
+    if(userExist.confirmed){
+      if (user) {
+        res.status(200).json({
+          Message: "Loggedin Successfully",
+          token: await userExist.generateToken(),
+          userId: userExist._id.toString(),
+          username: userExist.username,
+          profile_picture: userExist.profile_picture,
+          admin: userExist.isAdmin,
+        });
+      } else {
+        res.status(401).json({
+          message: "Invalid password",
+        });
+      }
+    }
+      else{
+        res.status(401).json({
+          message: "Registration not comfirmed",
+      })
     }
   } catch (error) {
     console.log(error);
